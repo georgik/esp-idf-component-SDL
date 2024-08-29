@@ -23,7 +23,7 @@ dependencies:
     rules:
     - if: "${BUILD_BOARD} == m5stack_core_s3"
   espressif/esp32_p4_function_ev_board:
-    version: "2.0.0"
+    version: "3.0.1"
     rules:
     - if: "${BUILD_BOARD} == esp32_p4_function_ev_board"
   espressif/esp_lcd_touch_tt21100: "*"
