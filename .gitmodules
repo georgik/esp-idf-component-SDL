@@ -1,0 +1,4 @@
+[submodule "SDL"]
+	path = SDL
+	url = git@github.com:georgik/SDL.git
+	branch = feature/esp-idf
