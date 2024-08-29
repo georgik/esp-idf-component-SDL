@@ -7,8 +7,7 @@ version: 3.1.2~1
 
 files:
   include:
-    - "include/build_config/*.h" # Include files from SDL
-    - "SDL/include/build_config/*.h"
+    - "SDL/include/build_config/*.h" # Include build_config files from SDL
 
 dependencies:
   espressif/esp-box-3:
