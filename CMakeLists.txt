@@ -76,6 +76,9 @@ idf_component_register(SRCS
                         "SDL/src/video/esp-idf/SDL_espidfframebuffer.c"
                         "SDL/src/video/esp-idf/SDL_espidfvideo.c"
 
+                        # Touch: ESP-IDF
+                        "SDL/src/video/esp-idf/SDL_espidftouch.c"
+
                         "SDL/src/SDL_properties.c"
                         "SDL/src/SDL_utils.c"
                     INCLUDE_DIRS
