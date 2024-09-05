@@ -84,4 +84,6 @@ idf_component_register(SRCS
                     INCLUDE_DIRS
                         "SDL/include"
                         "SDL/src"
+                        "SDL/include/SDL3"
 )
+
