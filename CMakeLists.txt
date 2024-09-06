@@ -85,5 +85,6 @@ idf_component_register(SRCS
                         "SDL/include"
                         "SDL/src"
                         "SDL/include/SDL3"
+                    REQUIRES
+                        $ENV{BUILD_BOARD}
 )
-
