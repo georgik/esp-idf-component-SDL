@@ -1,3 +1,7 @@
+set(extra_reqs "")
+if(IDF_TARGET STREQUAL "esp32p4")
+    list(APPEND extra_reqs esp_driver_ppa)
+endif()
 
 idf_component_register(SRCS
                         "SDL/src/SDL.c"
@@ -71,6 +75,9 @@ idf_component_register(SRCS
                         #"SDL/src/video/dummy/SDL_nullframebuffer.c"
                         #"SDL/src/video/dummy/SDL_nullvideo.c"
 
+                        # Render: ESP-IDF HW Accelerated renderers
+                        #"SDL/src/render/esp-idf/SDL_espidfppa.c"
+
                         # Video: ESP-IDF BSP based driver
                         "SDL/src/video/esp-idf/SDL_espidfevents.c"
                         "SDL/src/video/esp-idf/SDL_espidfframebuffer.c"
@@ -87,4 +94,7 @@ idf_component_register(SRCS
                         "SDL/include/SDL3"
                     REQUIRES
                         $ENV{BUILD_BOARD}
+                    PRIV_REQUIRES
+                        ${extra_reqs}
 )
+
