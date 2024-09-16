@@ -25,14 +25,7 @@ idf_component_register(SRCS
                         "SDL/src/stdlib/SDL_stdlib.c"
                         "SDL/src/stdlib/SDL_string.c"
                         "SDL/src/timer/SDL_timer.c"
-                        "SDL/src/timer/esp-idf/SDL_systimer.c"
                         "SDL/src/thread/SDL_thread.c"
-                        "SDL/src/thread/esp-idf/SDL_syscond.c"
-                        "SDL/src/thread/esp-idf/SDL_sysmutex.c"
-                        "SDL/src/thread/esp-idf/SDL_sysrwlock.c"
-                        "SDL/src/thread/esp-idf/SDL_syssem.c"
-                        "SDL/src/thread/esp-idf/SDL_systhread.c"
-                        "SDL/src/thread/esp-idf/SDL_systls.c"
                         "SDL/src/cpuinfo/SDL_cpuinfo.c"
                         "SDL/src/SDL_assert.c"
                         "SDL/src/SDL_error.c"
@@ -70,24 +63,36 @@ idf_component_register(SRCS
                         "SDL/src/video/SDL_yuv.c"
                         "SDL/src/video/yuv2rgb/yuv_rgb_std.c"
 
+                        "SDL/src/SDL_properties.c"
+                        "SDL/src/SDL_utils.c"
+
                         # Video: Dummy driver
                         #"SDL/src/video/dummy/SDL_nullevents.c"
                         #"SDL/src/video/dummy/SDL_nullframebuffer.c"
                         #"SDL/src/video/dummy/SDL_nullvideo.c"
 
+                        # Thread: ESP-IDF specific implementation of threads
+                        "src/thread/esp-idf/SDL_syscond.c"
+                        "src/thread/esp-idf/SDL_sysmutex.c"
+                        "src/thread/esp-idf/SDL_sysrwlock.c"
+                        "src/thread/esp-idf/SDL_syssem.c"
+                        "src/thread/esp-idf/SDL_systhread.c"
+                        "src/thread/esp-idf/SDL_systls.c"
+
+                        # Timer: ESP-IDF implmentation of timer
+                        "src/timer/esp-idf/SDL_systimer.c"
+
                         # Render: ESP-IDF HW Accelerated renderers
                         #"SDL/src/render/esp-idf/SDL_espidfppa.c"
 
                         # Video: ESP-IDF BSP based driver
-                        "SDL/src/video/esp-idf/SDL_espidfevents.c"
-                        "SDL/src/video/esp-idf/SDL_espidfframebuffer.c"
-                        "SDL/src/video/esp-idf/SDL_espidfvideo.c"
+                        "src/video/esp-idf/SDL_espidfevents.c"
+                        "src/video/esp-idf/SDL_espidfframebuffer.c"
+                        "src/video/esp-idf/SDL_espidfvideo.c"
 
                         # Touch: ESP-IDF
-                        "SDL/src/video/esp-idf/SDL_espidftouch.c"
+                        "src/video/esp-idf/SDL_espidftouch.c"
 
-                        "SDL/src/SDL_properties.c"
-                        "SDL/src/SDL_utils.c"
                     INCLUDE_DIRS
                         "SDL/include"
                         "SDL/src"
