@@ -1,4 +1,4 @@
 [submodule "SDL"]
 	path = SDL
 	url = https://github.com/georgik/SDL.git
-	branch = feature/esp-idf
+	branch = board/lilygo-ttgo-t5-4.7
