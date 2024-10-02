@@ -36,11 +36,12 @@ idf_component_register(SRCS
                         "SDL/src/thread/pthread/SDL_sysmutex.c"
                         "SDL/src/thread/pthread/SDL_sysrwlock.c"
                         "SDL/src/thread/pthread/SDL_syssem.c"
-                        "SDL/src/thread/pthread/SDL_systhread.c"
+                        # "SDL/src/thread/pthread/SDL_systhread.c"
                         "SDL/src/thread/pthread/SDL_systls.c"
 
                         # ESP-IDF workaround to add pthread functions missing in ESP-IDF
                         "src/thread/pthread/pthread_espidf.c"
+                        "src/thread/pthread/SDL_systhread.c"
 
                         # Alternative implementation to pthread using ESP-IDF tasks
                         #"src/thread/esp-idf/SDL_syscond.c"
@@ -105,6 +106,7 @@ idf_component_register(SRCS
                         "SDL/src/SDL_utils.c"
                     INCLUDE_DIRS
                         "include"
+                        "src/thread"
                         "SDL/include"
                         "SDL/src"
                         "SDL/include/SDL3"

@@ -3,9 +3,6 @@
  * It's intended as a workaround until ESP-IDF implemets those pieces of code.
  **/
 
-#define SIGVTALRM 26    /* virtual time alarm */
-#define SIGPROF 27
-
 #include <stdint.h>
 #include <stddef.h>
 
