@@ -100,6 +100,7 @@ idf_component_register(SRCS
                         "SDL/src/SDL_properties.c"
                         "SDL/src/SDL_utils.c"
                     INCLUDE_DIRS
+                        "include"
                         "SDL/include"
                         "SDL/src"
                         "SDL/include/SDL3"
