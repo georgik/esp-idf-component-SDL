@@ -23,7 +23,7 @@
 
 /* This file contains portable stdlib functions for SDL */
 
-#include "../libm/math_libm.h"
+#include "libm/math_libm.h"
 
 double SDL_atan(double x)
 {
