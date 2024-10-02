@@ -22,9 +22,13 @@ idf_component_register(SRCS
                         "SDL/src/stdlib/SDL_getenv.c"
                         "SDL/src/stdlib/SDL_malloc.c"
                         "SDL/src/stdlib/SDL_memset.c"
-                        "SDL/src/stdlib/SDL_stdlib.c"
+
                         "SDL/src/stdlib/SDL_string.c"
                         "SDL/src/timer/SDL_timer.c"
+
+                        # math.h patch for ESP-IDF
+                        #"SDL/src/stdlib/SDL_stdlib.c"
+                        "src/stdlib/SDL_stdlib.c"
 
                         # pthread implementation from SDL
                         "SDL/src/thread/SDL_thread.c"
