@@ -3,11 +3,12 @@ description: Simple DirectMedia Layer (SDL) Version 3.0 (ESP-IDF support fork)
 license: Zlib
 url: https://www.libsdl.org/
 repository: https://github.com/georgik/SDL/tree/feature/esp-idf
-version: 3.1.2~4
+version: 3.1.2~5
 
 files:
   include:
     - "SDL/include/build_config/*.h" # Include build_config files from SDL
+    - "include/build_config/*.h" # Include build_config files from ESP-IDF
   exclude:
     - "Android.mk"
     - "VisualC*"
