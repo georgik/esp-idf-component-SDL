@@ -113,6 +113,7 @@ idf_component_register(SRCS
                         "src/thread"
                         "SDL/include"
                         "SDL/src"
+                        "SDL/src/video"
                         "SDL/include/SDL3"
                     REQUIRES
                         $ENV{BUILD_BOARD}
