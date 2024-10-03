@@ -84,15 +84,18 @@ idf_component_register(SRCS
                         "SDL/src/video/SDL_rect.c"
                         "SDL/src/video/SDL_stretch.c"
                         "SDL/src/video/SDL_surface.c"
-                        "SDL/src/video/SDL_video.c"
                         "SDL/src/video/SDL_yuv.c"
                         "SDL/src/video/yuv2rgb/yuv_rgb_std.c"
+
 
                         # Timer
                         "src/timer/esp-idf/SDL_systimer.c"
 
                         # Render: ESP-IDF HW Accelerated renderers
                         #"SDL/src/render/esp-idf/SDL_espidfppa.c"
+
+                        # Video: patch registration of video
+                        "src/video/SDL_video.c"
 
                         # Video: ESP-IDF BSP based driver
                         "src/video/esp-idf/SDL_espidfevents.c"
@@ -106,6 +109,7 @@ idf_component_register(SRCS
                         "SDL/src/SDL_utils.c"
                     INCLUDE_DIRS
                         "include"
+                        "include/build_config"
                         "src/thread"
                         "SDL/include"
                         "SDL/src"
