@@ -110,6 +110,7 @@ idf_component_register(SRCS
                     INCLUDE_DIRS
                         "include"
                         "include/build_config"
+                        "src"
                         "src/thread"
                         "SDL/include"
                         "SDL/src"
