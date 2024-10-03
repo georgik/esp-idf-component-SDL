@@ -8,6 +8,12 @@ version: 3.1.2~4
 files:
   include:
     - "SDL/include/build_config/*.h" # Include build_config files from SDL
+  exclude:
+    - "Android.mk"
+    - "VisualC*"
+    - "XCode"
+    - "android-project"
+    - "wayland-protocols"
 
 dependencies:
   espressif/esp_lcd_touch_tt21100: "*"
