@@ -24,10 +24,12 @@ idf_component_register(SRCS
                         "SDL/src/stdlib/SDL_memset.c"
 
                         "SDL/src/stdlib/SDL_string.c"
+
+                        "SDL/src/stdlib/SDL_murmur3.c"
                         "SDL/src/timer/SDL_timer.c"
 
-                        # math.h patch for ESP-IDF
-                        #"SDL/src/stdlib/SDL_stdlib.c"
+                        # Copy of upstream file, with #include <math.h> patch for ESP-IDF
+                        # "SDL/src/stdlib/SDL_stdlib.c"
                         "src/stdlib/SDL_stdlib.c"
 
                         # pthread implementation from SDL
@@ -41,6 +43,12 @@ idf_component_register(SRCS
 
                         # ESP-IDF workaround to add pthread functions missing in ESP-IDF
                         "src/thread/pthread/pthread_espidf.c"
+
+                        # This is basically just a copy of upstream file, but due to problem
+                        # with local include required for pthread_attr_getschedparam we have
+                        # this copy with modified include to:
+                        # #include "thread/SDL_thread_c.h"
+                        # #include "thread/SDL_systhread.h"
                         "src/thread/pthread/SDL_systhread.c"
 
                         # Alternative implementation to pthread using ESP-IDF tasks
@@ -89,6 +97,10 @@ idf_component_register(SRCS
 
 
                         # Timer
+                        # Copy of SDL/src/timer/unix/SDL_systimer.c
+                        # with changes:
+                        # #ifdef SDL_TIMER_ESP_IDF
+                        # #include "timer/SDL_timer_c.h"
                         "src/timer/esp-idf/SDL_systimer.c"
 
                         # Render: ESP-IDF HW Accelerated renderers

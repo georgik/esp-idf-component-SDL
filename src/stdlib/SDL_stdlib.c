@@ -19,11 +19,12 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 #include "SDL_internal.h"
+
+// This file contains portable stdlib functions for SDL
+
 #include <math.h>
 
-/* This file contains portable stdlib functions for SDL */
-
-#include "libm/math_libm.h"
+#include "../libm/math_libm.h"
 
 double SDL_atan(double x)
 {
@@ -123,7 +124,7 @@ double SDL_ceil(double x)
         integer += 1.0;
     }
     return integer;
-#endif /* HAVE_CEIL */
+#endif // HAVE_CEIL
 }
 
 float SDL_ceilf(float x)
@@ -142,14 +143,14 @@ double SDL_copysign(double x, double y)
 #elif defined(HAVE__COPYSIGN)
     return _copysign(x, y);
 #elif defined(__WATCOMC__) && defined(__386__)
-    /* this is nasty as hell, but it works.. */
+    // this is nasty as hell, but it works..
     unsigned int *xi = (unsigned int *)&x,
                  *yi = (unsigned int *)&y;
     xi[1] = (yi[1] & 0x80000000) | (xi[1] & 0x7fffffff);
     return x;
 #else
     return SDL_uclibc_copysign(x, y);
-#endif /* HAVE_COPYSIGN */
+#endif // HAVE_COPYSIGN
 }
 
 float SDL_copysignf(float x, float y)
@@ -273,7 +274,7 @@ float SDL_fmodf(float x, float y)
 #endif
 }
 
-SDL_bool SDL_isinf(double x)
+int SDL_isinf(double x)
 {
 #ifdef HAVE_ISINF
     return isinf(x);
@@ -282,7 +283,7 @@ SDL_bool SDL_isinf(double x)
 #endif
 }
 
-SDL_bool SDL_isinff(float x)
+int SDL_isinff(float x)
 {
 #ifdef HAVE_ISINF_FLOAT_MACRO
     return isinf(x);
@@ -293,7 +294,7 @@ SDL_bool SDL_isinff(float x)
 #endif
 }
 
-SDL_bool SDL_isnan(double x)
+int SDL_isnan(double x)
 {
 #ifdef HAVE_ISNAN
     return isnan(x);
@@ -302,7 +303,7 @@ SDL_bool SDL_isnan(double x)
 #endif
 }
 
-SDL_bool SDL_isnanf(float x)
+int SDL_isnanf(float x)
 {
 #ifdef HAVE_ISNAN_FLOAT_MACRO
     return isnan(x);
@@ -533,29 +534,29 @@ int SDL_isblank(int x) { return ((x) == ' ') || ((x) == '\t'); }
 void *SDL_aligned_alloc(size_t alignment, size_t size)
 {
     size_t padding;
-    Uint8 *retval = NULL;
+    Uint8 *result = NULL;
 
     if (alignment < sizeof(void*)) {
         alignment = sizeof(void*);
     }
     padding = (alignment - (size % alignment));
 
-    if (SDL_size_add_overflow(size, alignment, &size) == 0 &&
-        SDL_size_add_overflow(size, sizeof(void *), &size) == 0 &&
-        SDL_size_add_overflow(size, padding, &size) == 0) {
+    if (SDL_size_add_check_overflow(size, alignment, &size) &&
+        SDL_size_add_check_overflow(size, sizeof(void *), &size) &&
+        SDL_size_add_check_overflow(size, padding, &size)) {
         void *original = SDL_malloc(size);
         if (original) {
-            /* Make sure we have enough space to store the original pointer */
-            retval = (Uint8 *)original + sizeof(original);
+            // Make sure we have enough space to store the original pointer
+            result = (Uint8 *)original + sizeof(original);
 
-            /* Align the pointer we're going to return */
-            retval += alignment - (((size_t)retval) % alignment);
+            // Align the pointer we're going to return
+            result += alignment - (((size_t)result) % alignment);
 
-            /* Store the original pointer right before the returned value */
-            SDL_memcpy(retval - sizeof(original), &original, sizeof(original));
+            // Store the original pointer right before the returned value
+            SDL_memcpy(result - sizeof(original), &original, sizeof(original));
         }
     }
-    return retval;
+    return result;
 }
 
 void SDL_aligned_free(void *mem)

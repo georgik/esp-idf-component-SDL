@@ -22,13 +22,13 @@
 esp_lcd_panel_handle_t panel_handle = NULL;
 esp_lcd_panel_io_handle_t panel_io_handle = NULL;
 
-static int ESPIDF_VideoInit(SDL_VideoDevice *_this);
+static bool ESPIDF_VideoInit(SDL_VideoDevice *_this);
 static void ESPIDF_VideoQuit(SDL_VideoDevice *_this);
 
-static int ESPIDF_SetWindowPosition(SDL_VideoDevice *_this, SDL_Window *window)
+static bool ESPIDF_SetWindowPosition(SDL_VideoDevice *_this, SDL_Window *window)
 {
     SDL_SendWindowEvent(window, SDL_EVENT_WINDOW_MOVED, window->floating.x, window->floating.y);
-    return 0;
+    return true;
 }
 
 static void ESPIDF_SetWindowSize(SDL_VideoDevice *_this, SDL_Window *window)
@@ -58,7 +58,7 @@ VideoBootStrap ESPIDF_bootstrap = {
     ESPIDF_CreateDevice, NULL
 };
 
-static int ESPIDF_VideoInit(SDL_VideoDevice *_this)
+static bool ESPIDF_VideoInit(SDL_VideoDevice *_this)
 {
     SDL_DisplayMode mode;
     SDL_zero(mode);
@@ -67,7 +67,7 @@ static int ESPIDF_VideoInit(SDL_VideoDevice *_this)
     mode.h = BSP_LCD_V_RES;
     printf("ESP-IDF video init\n");
     if (SDL_AddBasicVideoDisplay(&mode) == 0) {
-        return -1;
+        return false;
     }
 
 #ifdef CONFIG_IDF_TARGET_ESP32P4
@@ -86,7 +86,7 @@ static int ESPIDF_VideoInit(SDL_VideoDevice *_this)
 #endif
 
     ESPIDF_InitTouch();
-    return 0;
+    return true;
 }
 
 static void ESPIDF_VideoQuit(SDL_VideoDevice *_this)

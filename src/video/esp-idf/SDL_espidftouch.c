@@ -28,8 +28,8 @@ void ESPIDF_PumpTouchEvent(void)
 {
     SDL_Window *window;
     SDL_VideoDisplay *display;
-    static SDL_bool was_pressed = SDL_FALSE;
-    SDL_bool pressed;
+    static bool was_pressed = false;
+    bool pressed;
 
     uint16_t touchpad_x[1] = {0};
     uint16_t touchpad_y[1] = {0};
