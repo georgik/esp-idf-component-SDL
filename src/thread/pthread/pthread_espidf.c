@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include "SDL_thread.h"
 
 typedef uint32_t sigset_t;
 
@@ -23,3 +24,8 @@ int sigaddset(sigset_t *set, int signo) {
     *set |= (1U << (signo - 1));
     return 0;
 }
+
+/**
+ * Wrapper function for SDL_SYS_SetThreadPriority
+ */
+int __wrap_SDL_SYS_SetThreadPriority(SDL_ThreadPriority priority) { return 0; }

@@ -112,6 +112,7 @@ idf_component_register(SRCS
                         "include/build_config"
                         "src"
                         "src/thread"
+                        "src/thread/pthread"
                         "SDL/include"
                         "SDL/src"
                         "SDL/src/video"
@@ -122,3 +123,6 @@ idf_component_register(SRCS
                         ${extra_reqs}
 )
 
+# Corrections for some function usning wrapper technique
+# https://github.com/espressif/esp-idf/tree/master/examples/build_system/wrappers
+target_link_options(${COMPONENT_LIB} PRIVATE "-Wl,--wrap=SDL_SYS_SetThreadPriority")
