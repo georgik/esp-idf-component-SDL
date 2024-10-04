@@ -108,6 +108,13 @@ typedef unsigned int uintptr_t;
 #define SDL_PLATFORM_ESD_IDF 1
 #define SDL_THREAD_PTHREAD 1
 
+/*
+  Disable SDL_DYNAMIC_API to avoid modification of src/dynapi/SDL_dynapi.h
+  Turn on the condition that DYNAPI requires DLOPEN, but we do not have it,
+  So it won't be included.
+ */
+#define DYNAPI_NEEDS_DLOPEN 1
+
 /* Enable the stub thread support (src/thread/generic/\*.c) */
 //#define SDL_THREADS_DISABLED    1
 
