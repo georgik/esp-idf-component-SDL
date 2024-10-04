@@ -1,9 +1,9 @@
 ## IDF Component Manager Manifest File
-description: Simple DirectMedia Layer (SDL) Version 3.0 (ESP-IDF support fork)
+description: Simple DirectMedia Layer (SDL) Version 3.0 (ESP-IDF wrapper on upstream SDL)
 license: Zlib
 url: https://www.libsdl.org/
 repository: https://github.com/georgik/SDL/tree/feature/esp-idf
-version: 3.1.2~6
+version: 3.1.2~7
 
 files:
   include:
