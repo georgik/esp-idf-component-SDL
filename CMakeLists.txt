@@ -119,6 +119,13 @@ idf_component_register(SRCS
 
                         "SDL/src/SDL_properties.c"
                         "SDL/src/SDL_utils.c"
+
+
+                        # Joystick
+                        "SDL/src/joystick/SDL_gamepad.c"
+                        "SDL/src/joystick/SDL_joystick.c"
+                        "SDL/src/SDL_guid.c"
+
                     INCLUDE_DIRS
                         "include"
                         "include/build_config"
