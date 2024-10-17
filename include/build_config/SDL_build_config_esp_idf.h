@@ -91,7 +91,7 @@ typedef unsigned int uintptr_t;
 #define SDL_AUDIO_DRIVER_DUMMY  1
 
 /* Enable the stub joystick driver (src/joystick/dummy/\*.c) */
-#define SDL_JOYSTICK_DISABLED   1
+//#define SDL_JOYSTICK_DISABLED   1
 
 /* Enable the stub haptic driver (src/haptic/dummy/\*.c) */
 #define SDL_HAPTIC_DISABLED 1
@@ -100,7 +100,7 @@ typedef unsigned int uintptr_t;
 #define SDL_HIDAPI_DISABLED 1
 
 /* Enable the stub sensor driver (src/sensor/dummy/\*.c) */
-#define SDL_SENSOR_DISABLED 1
+// #define SDL_SENSOR_DISABLED 1
 
 /* Enable the dummy shared object loader (src/loadso/dummy/\*.c) */
 #define SDL_LOADSO_DUMMY 1
