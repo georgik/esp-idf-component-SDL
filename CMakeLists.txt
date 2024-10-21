@@ -127,6 +127,8 @@ idf_component_register(SRCS
                         "SDL/src/SDL_guid.c"
                         "SDL/src/sensor/SDL_sensor.c"
                         "SDL/src/sensor/dummy/SDL_dummysensor.c"
+                        "SDL/src/joystick/controller_type.c"
+                        "SDL/src/joystick/SDL_steam_virtual_gamepad.c"
 
                     INCLUDE_DIRS
                         "include"
