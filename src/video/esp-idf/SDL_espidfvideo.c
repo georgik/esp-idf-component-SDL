@@ -8,7 +8,9 @@
 
 #include "bsp/esp-bsp.h"
 #include "bsp/display.h"
+#if BSP_CAPS_TOUCH == 1
 #include "bsp/touch.h"
+#endif
 #include "esp_log.h"
 
 #ifdef SDL_VIDEO_DRIVER_ESP_IDF
@@ -85,7 +87,9 @@ static bool ESPIDF_VideoInit(SDL_VideoDevice *_this)
     esp_lcd_panel_disp_on_off(panel_handle, true);
 #endif
 
+#if BSP_CAPS_TOUCH == 1
     ESPIDF_InitTouch();
+#endif
     return true;
 }
 
