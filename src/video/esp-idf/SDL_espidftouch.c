@@ -5,7 +5,9 @@
 
 #include "bsp/esp-bsp.h"
 #include "bsp/display.h"
+#if BSP_CAPS_TOUCH == 1
 #include "bsp/touch.h"
+#endif
 #include "esp_log.h"
 
 #define ESPIDF_TOUCH_ID         1
@@ -15,6 +17,7 @@ esp_lcd_touch_handle_t touch_handle;   // LCD touch handle
 
 void ESPIDF_InitTouch(void)
 {
+#if BSP_CAPS_TOUCH == 1
     bsp_i2c_init();
 
     /* Initialize touch */
@@ -22,10 +25,12 @@ void ESPIDF_InitTouch(void)
 
     SDL_AddTouch(ESPIDF_TOUCH_ID, SDL_TOUCH_DEVICE_DIRECT, "Touchscreen");
     ESP_LOGI("SDL", "ESPIDF_InitTouch");
+#endif
 }
 
 void ESPIDF_PumpTouchEvent(void)
 {
+#if BSP_CAPS_TOUCH == 1
     SDL_Window *window;
     SDL_VideoDisplay *display;
     static bool was_pressed = false;
@@ -58,6 +63,7 @@ void ESPIDF_PumpTouchEvent(void)
                             touchpad_y[0],
                             1.0f);
     }
+#endif
 }
 
 int ESPIDF_CalibrateTouch(float screenX[], float screenY[], float touchX[], float touchY[])
