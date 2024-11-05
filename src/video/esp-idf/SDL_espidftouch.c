@@ -7,13 +7,13 @@
 #include "bsp/display.h"
 #if BSP_CAPS_TOUCH == 1
 #include "bsp/touch.h"
+esp_lcd_touch_handle_t touch_handle;   // LCD touch handle
 #endif
 #include "esp_log.h"
 
 #define ESPIDF_TOUCH_ID         1
 #define ESPIDF_TOUCH_FINGER     1
 
-esp_lcd_touch_handle_t touch_handle;   // LCD touch handle
 
 void ESPIDF_InitTouch(void)
 {
