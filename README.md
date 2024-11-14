@@ -12,15 +12,26 @@ set(ENV{BUILD_BOARD} ${BUILD_BOARD})
 
 ## Examples
 
+### C Examples
+
 - https://github.com/georgik/esp32-sdl3-example
 - https://github.com/georgik/OpenTyrian
 - https://github.com/georgik/esp32-weather-display
 
+### Embedded Swift Examples
+
+- https://github.com/georgik/esp32-sdl3-swift-example/
+- https://github.com/georgik/esp32-swift-weather-display
+
 ## Supported
 
+Support is achieved by using [ESP-BSP](https://github.com/espressif/esp-bsp)
+
+- ESP32-C3-LcdKit
+- ESP32-C6-DevKit
 - ESP32-S3-BOX-3
-- M5Stack CoreS3
 - ESP32-P4 Evaluation Kit
   - with PPA for scaling the screen
+- M5Stack CoreS3
 
 
