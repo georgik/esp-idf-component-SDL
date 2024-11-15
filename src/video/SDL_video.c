@@ -4525,7 +4525,7 @@ void SDL_GL_ResetAttributes(void)
     _this->gl_config.egl_platform = 0;
 }
 
-bool SDL_GL_SetAttribute(SDL_GLattr attr, int value)
+bool SDL_GL_SetAttribute(SDL_GLAttr attr, int value)
 {
 #if defined(SDL_VIDEO_OPENGL) || defined(SDL_VIDEO_OPENGL_ES) || defined(SDL_VIDEO_OPENGL_ES2)
     bool result;
@@ -4643,7 +4643,7 @@ bool SDL_GL_SetAttribute(SDL_GLattr attr, int value)
 #endif // SDL_VIDEO_OPENGL
 }
 
-bool SDL_GL_GetAttribute(SDL_GLattr attr, int *value)
+bool SDL_GL_GetAttribute(SDL_GLAttr attr, int *value)
 {
 #if defined(SDL_VIDEO_OPENGL) || defined(SDL_VIDEO_OPENGL_ES) || defined(SDL_VIDEO_OPENGL_ES2)
     PFNGLGETERRORPROC glGetErrorFunc;
