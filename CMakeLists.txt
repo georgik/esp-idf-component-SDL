@@ -107,7 +107,8 @@ idf_component_register(SRCS
                         #"SDL/src/render/esp-idf/SDL_espidfppa.c"
 
                         # Video: patch registration of video
-                        "src/video/SDL_video.c"
+                        # Using SDL_VIDE_DRIVER_PRIVATE
+                        "SDL/src/video/SDL_video.c"
 
                         # Video: ESP-IDF BSP based driver
                         "src/video/esp-idf/SDL_espidfevents.c"

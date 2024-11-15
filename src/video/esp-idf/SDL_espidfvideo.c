@@ -13,7 +13,7 @@
 #endif
 #include "esp_log.h"
 
-#ifdef SDL_VIDEO_DRIVER_ESP_IDF
+#ifdef SDL_VIDEO_DRIVER_PRIVATE
 
 #include "video/SDL_sysvideo.h"
 #include "video/SDL_pixels_c.h"
@@ -55,7 +55,7 @@ static SDL_VideoDevice *ESPIDF_CreateDevice(void)
     return device;
 }
 
-VideoBootStrap ESPIDF_bootstrap = {
+VideoBootStrap PRIVATE_bootstrap = {
     ESPIDFVID_DRIVER_NAME, "SDL esp-idf video driver",
     ESPIDF_CreateDevice, NULL
 };
@@ -98,4 +98,4 @@ static void ESPIDF_VideoQuit(SDL_VideoDevice *_this)
     // Clean up BSP resources if needed
 }
 
-#endif /* SDL_VIDEO_DRIVER_ESP_IDF */
+#endif /* SDL_VIDEO_DRIVER_PRIVATE */

@@ -32,23 +32,3 @@ int sigaddset(sigset_t *set, int signo) {
  */
 int __wrap_SDL_SYS_SetThreadPriority(SDL_ThreadPriority priority) { return 0; }
 
-/**
- * Stub for pthread_setschedparam which is missing in ESP-IDF
- */
-int pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *param) {
-    // Dummy implementation: do nothing and return success
-    return 0;
-}
-
-/**
- * Stub for pthread_setschedparam which is missing in ESP-IDF
- */
-int pthread_getschedparam(pthread_t thread, int *policy, struct sched_param *param) {
-    if (policy) {
-        *policy = SCHED_OTHER; // Default scheduling policy
-    }
-    if (param) {
-        param->sched_priority = 0; // Default priority
-    }
-    return 0;
-}

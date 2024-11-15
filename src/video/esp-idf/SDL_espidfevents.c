@@ -2,7 +2,7 @@
 
 #include "SDL_internal.h"
 
-#ifdef SDL_VIDEO_DRIVER_ESP_IDF
+#ifdef SDL_VIDEO_DRIVER_PRIVATE
 
 #include "events/SDL_events_c.h"
 #include "SDL_espidfvideo.h"
@@ -17,4 +17,4 @@ void ESPIDF_PumpEvents(SDL_VideoDevice *_this)
     ESPIDF_PumpTouchEvent();
 }
 
-#endif /* SDL_VIDEO_DRIVER_ESP_IDF */
+#endif /* SDL_VIDEO_DRIVER_PRIVATE */

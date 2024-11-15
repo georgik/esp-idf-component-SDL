@@ -39,7 +39,7 @@
 #define HAVE_MALLOC 1
 #define HAVE_FABS 1
 #define HAVE_POW 1
-#define SDL_VIDEO_DRIVER_ESP_IDF 1
+#define SDL_VIDEO_DRIVER_PRIVATE 1
 #define HAVE_SIN 1
 #define HAVE_COS 1
 #define SDL_VIDEO_RENDER_SW 1

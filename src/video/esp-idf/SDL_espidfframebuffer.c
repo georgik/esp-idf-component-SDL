@@ -1,6 +1,6 @@
 #include "SDL_internal.h"
 
-#ifdef SDL_VIDEO_DRIVER_ESP_IDF
+#ifdef SDL_VIDEO_DRIVER_PRIVATE
 
 #include "video/SDL_sysvideo.h"
 #include "SDL_properties_c.h"
@@ -227,4 +227,4 @@ void SDL_ESPIDF_DestroyWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *win
 #endif
 }
 
-#endif /* SDL_VIDEO_DRIVER_ESP_IDF */
+#endif /* SDL_VIDEO_DRIVER_PRIVATE */

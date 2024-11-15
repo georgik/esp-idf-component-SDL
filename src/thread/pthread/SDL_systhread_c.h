@@ -28,8 +28,5 @@ typedef pthread_t SYS_ThreadHandle;
 #define SIGVTALRM 26    /* virtual time alarm */
 #define SIGPROF 27
 
-
-extern int pthread_setschedparam(pthread_t, int, const struct sched_param *);
-extern int pthread_getschedparam(pthread_t , int *, struct sched_param *);
 extern int sched_get_priority_min(int);
 extern int sched_get_priority_max(int);
