@@ -34,16 +34,18 @@ jobs:
       - name: Simulate & take a screenshot
         run: |
           curl -L https://wokwi.com/ci/install.sh | sh
-          /home/runner/.wokwi/bin/wokwi-cli --timeout 20000 \
+          /home/runner/.wokwi/bin/wokwi-cli \
+            --timeout 6000 \
             --timeout-exit-code 0 \
             --screenshot-part "lcd1" \
             --screenshot-time 5000 \
             --elf "build.${{ matrix.board }}/${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin" \
-            --expect-text 'Entering main loop...' \
             --fail-text 'Rebooting...' \
             --screenshot-file "screenshot-${{ matrix.board }}.png" \
             --serial-log-file 'wokwi-logs-${{ matrix.board }}.txt' \
             "examples/snow/boards/${{ matrix.board }}"
+        # Following option is not used in this case, because we need to wait for screenshot
+        # --expect-text 'Entering main loop...'
         env:
           WOKWI_CLI_TOKEN: ${{ secrets.WOKWI_CLI_TOKEN }}
 
