@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        board: [esp-box-3, m5stack_core_s3, esp32_p4_function_ev_board]
+        board: [esp-box-3, esp32_p4_function_ev_board]
       fail-fast: false
 
     steps:
@@ -37,7 +37,7 @@ jobs:
           /home/runner/.wokwi/bin/wokwi-cli \
             --timeout 6000 \
             --timeout-exit-code 0 \
-            --screenshot-part "lcd1" \
+            --screenshot-part "esp" \
             --screenshot-time 5000 \
             --elf "build.${{ matrix.board }}/${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin" \
             --fail-text 'Rebooting...' \
@@ -60,11 +60,11 @@ jobs:
     #       fail_text: 'Rebooting...'
     #       serial_log_file: 'wokwi-logs-${{ matrix.board }}.txt'
 
-      - name: Upload Wokwi Logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: wokwi-logs-${{ matrix.board }}
-          path: wokwi-logs-${{ matrix.board }}.txt
+    #   - name: Upload Wokwi Logs
+    #     uses: actions/upload-artifact@v4
+    #     with:
+    #       name: wokwi-logs-${{ matrix.board }}
+    #       path: wokwi-logs-${{ matrix.board }}.txt
 
       - name: Upload Screenshot
         uses: actions/upload-artifact@v4

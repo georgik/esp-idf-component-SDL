@@ -1,0 +1,37 @@
+name: Upload screenthots to screenshotbot.io
+
+on:
+  workflow_dispatch:
+    inputs:
+      prefix:
+        description: 'Prefix for binary name'
+        required: true
+        default: 'snow'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [esp32_p4_function_ev_board]
+      fail-fast: false
+
+    steps:
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: test-example.yml
+          name: screenshot-${{ matrix.board }}.png
+          path: build.${{ matrix.board }}
+
+      - name: Upload to screenshotbot.io
+        run: |
+          curl https://screenshotbot.io/recorder.sh | sh
+          ~/screenshotbot/recorder \
+            --directory build.${{ matrix.board }} \
+            --channel esp-idf-component-SDL \
+            --main-branch main
+        env:
+          SCREENSHOTBOT_API_KEY: ${{ secrets.SCREENSHOTBOT_API_KEY }}
+          SCREENSHOTBOT_API_SECRET: ${{ secrets.SCREENSHOTBOT_API_SECRET }}
