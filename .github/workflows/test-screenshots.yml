@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        board: [esp-box-3]
+        board: [esp-box-3, esp32_p4_function_ev_board]
       fail-fast: false
 
     steps:
