@@ -28,11 +28,12 @@ jobs:
           name: ${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin
           path: build.${{ matrix.board }}
 
-      - name: Use Wokwi CI Server
-        uses: wokwi/wokwi-ci-server-action@v1
+    #   - name: Use Wokwi CI Server
+    #     uses: wokwi/wokwi-ci-server-action@v1
 
-      - name: Simulate & take a screen shot
+      - name: Simulate & take a screenshot
         run: |
+          curl -L https://wokwi.com/ci/install.sh | sh
           wokwi-cli --timeout 20000 \
             --timeout-exit-code 0 \
             --screenshot-part "lcd1" \
