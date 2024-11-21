@@ -1,7 +1,10 @@
 ## IDF Component Manager Manifest File
 dependencies:
-  georgik/sdl: "==3.1.7~3"
-#    git: https://github.com/georgik/esp-idf-component-SDL.git
+  georgik/sdl:
+    version: "*"
+    override_path: "../../../sdl"
+    # version: "==3.1.7~3"
+    # git: https://github.com/georgik/esp-idf-component-SDL.git
 #  georgik/sdl_image: "^3.0.0~1"
 #    git: https://github.com/georgik/esp-idf-component-SDL_image.git
   georgik/sdl_ttf: "^3.0.0~3"
