@@ -1,4 +1,4 @@
 [submodule "SDL"]
-	path = SDL
+	path = sdl/SDL
 	url = https://github.com/libsdl-org/SDL.git
 	branch = main
