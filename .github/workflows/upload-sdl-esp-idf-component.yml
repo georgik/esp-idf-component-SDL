@@ -20,4 +20,5 @@ jobs:
             with:
               name: "sdl"
               namespace: "georgik"
+              directories: "sdl"
               api_token: ${{ secrets.IDF_COMPONENT_API_TOKEN }}

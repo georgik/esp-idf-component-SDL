@@ -34,7 +34,7 @@ jobs:
       - name: Simulate & take a screenshot
         run: |
           curl -L https://wokwi.com/ci/install.sh | sh
-          wokwi-cli --timeout 20000 \
+          /home/runner/.wokwi/bin/wokwi-cli --timeout 20000 \
             --timeout-exit-code 0 \
             --screenshot-part "lcd1" \
             --screenshot-time 5000 \
