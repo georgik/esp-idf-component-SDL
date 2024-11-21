@@ -38,7 +38,7 @@ jobs:
             --timeout-exit-code 0 \
             --screenshot-part "lcd1" \
             --screenshot-time 5000 \
-            --elf "build.${{ matrix.board }}/${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin"
+            --elf "build.${{ matrix.board }}/${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin" \
             --expect-text 'Entering main loop...' \
             --fail-text: 'Rebooting...' \
             --screenshot-file "screenshot-${{ matrix.board }}.png" \
