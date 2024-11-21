@@ -22,7 +22,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: test-example.yml
-          name: screenshot-${{ matrix.board }}.png
+          name: screenshot-${{ matrix.board }}
           path: build.${{ matrix.board }}
 
       - name: Upload to screenshotbot.io
