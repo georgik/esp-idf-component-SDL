@@ -19,8 +19,10 @@ on:
         description: 'Name of data partition'
         required: true
         default: 'assets'
-
-
+      use_upstream_sdl:
+        description: 'Update SDL submodule to the latest upstream main branch'
+        required: false
+        default: 'false' # Default is false, meaning use the current SDL code
 
 jobs:
   build:
@@ -45,6 +47,16 @@ jobs:
             esp32_p4_function_ev_board) echo 'esp32p4';;
             *) echo 'Unknown target'; exit 1;;
           esac)" >> $GITHUB_ENV
+
+      - name: Update SDL to Upstream Main (Optional)
+        if: ${{ github.event.inputs.use_upstream_sdl == 'true' }}
+        run: |
+          git submodule update --init sdl/SDL # Initialize the specific submodule
+          cd sdl/SDL
+          git fetch origin main # Fetch the latest changes from the 'main' branch of the submodule
+          git checkout main # Switch to the 'main' branch
+          git pull origin main # Ensure it's up to date with upstream
+          cd -
 
       - name: esp-idf build and merge binaries
         uses: espressif/esp-idf-ci-action@v1.1.0
