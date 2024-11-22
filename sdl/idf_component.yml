@@ -3,7 +3,7 @@ description: Simple DirectMedia Layer (SDL) Version 3.0 (ESP-IDF wrapper on upst
 license: Zlib
 url: https://www.libsdl.org/
 repository: https://github.com/georgik/SDL/tree/feature/esp-idf
-version: 3.1.7~5
+version: 3.1.7~6
 
 files:
   exclude:
@@ -68,6 +68,7 @@ files:
   include:
     - "SDL/include/build_config/*.h" # Include build_config files from SDL
     - "include/build_config/*.h" # Include build_config files from ESP-IDF
+    - "SDL/src/core/linux/SDL_dbus.h" # This file is hardcoded in src/SDL.c
 
 dependencies:
   espressif/esp_lcd_touch_tt21100: "*"
