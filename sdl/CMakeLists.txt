@@ -17,11 +17,15 @@ idf_component_register(SRCS
                         "SDL/src/events/SDL_touch.c"
                         "SDL/src/events/SDL_windowevents.c"
                         "SDL/src/filesystem/SDL_filesystem.c"
-                        "SDL/src/file/SDL_iostream.c"
                         "SDL/src/stdlib/SDL_iconv.c"
                         "SDL/src/stdlib/SDL_getenv.c"
                         "SDL/src/stdlib/SDL_malloc.c"
                         "SDL/src/stdlib/SDL_memset.c"
+
+                        # IO
+                        "SDL/src/io/SDL_asyncio.c"
+                        "SDL/src/io/SDL_iostream.c"
+                        "SDL/src/io/generic/SDL_asyncio_generic.c"
 
                         "SDL/src/stdlib/SDL_string.c"
 
@@ -130,6 +134,13 @@ idf_component_register(SRCS
                         "SDL/src/sensor/dummy/SDL_dummysensor.c"
                         "SDL/src/joystick/controller_type.c"
                         "SDL/src/joystick/SDL_steam_virtual_gamepad.c"
+
+                        # Tray
+                        "SDL/src/tray/dummy/SDL_tray.c"
+                        "SDL/src/tray/SDL_tray_utils.c"
+
+                        # Clipboard
+                        "SDL/src/video/SDL_clipboard.c"
 
                     INCLUDE_DIRS
                         "include"
