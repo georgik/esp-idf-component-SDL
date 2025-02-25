@@ -73,13 +73,19 @@ static bool ESPIDF_VideoInit(SDL_VideoDevice *_this)
     }
 
 #ifdef CONFIG_IDF_TARGET_ESP32P4
-    ESP_ERROR_CHECK(bsp_display_new(NULL, &panel_handle, &panel_io_handle));
+    const bsp_display_config_t bsp_disp_cfg = {
+        .dsi_bus = {
+            .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
+            .lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS,
+        }
+    };
 #else
     const bsp_display_config_t bsp_disp_cfg = {
         .max_transfer_sz = (BSP_LCD_H_RES * BSP_LCD_V_RES) * sizeof(uint16_t),
     };
-    ESP_ERROR_CHECK(bsp_display_new(&bsp_disp_cfg, &panel_handle, &panel_io_handle));
 #endif
+
+    ESP_ERROR_CHECK(bsp_display_new(&bsp_disp_cfg, &panel_handle, &panel_io_handle));
 
     ESP_ERROR_CHECK(bsp_display_backlight_on());
 
