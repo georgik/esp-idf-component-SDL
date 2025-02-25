@@ -13,25 +13,25 @@ idf.py create-project-from-example "georgik/sdl:snow"
 ### Build for ESP32-S3-BOX-3
 
 ```shell
-idf.py @boards/esp-box-3.cfg build
+idf.py @boards/esp-box-3.cfg build flash monitor
 ```
 
 ### Build for ESP32-S3-BOX (prior Dec. 2023)
 
 ```shell
-idf.py @boards/esp-box.cfg build
+idf.py @boards/esp-box.cfg build flash monitor
 ```
 
 ### Build for ESP32-P4
 
 ```shell
-idf.py @boards/esp32_p4_function_ev_board.cfg build
+idf.py @boards/esp32_p4_function_ev_board.cfg build flash monitor
 ```
 
 ### Build for M5Stack-CoreS3
 
 ```shell
-idf.py @boards/m5stack_core_s3.cfg build
+idf.py @boards/m5stack_core_s3.cfg build flash monitor
 ```
 
 ### Build for ESP32-C6-DevKit or other custom DevKit
