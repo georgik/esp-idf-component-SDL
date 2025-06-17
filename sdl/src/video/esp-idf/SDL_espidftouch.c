@@ -10,6 +10,9 @@
 esp_lcd_touch_handle_t touch_handle;   // LCD touch handle
 #endif
 #include "esp_log.h"
+#include "esp_err.h"
+
+static bool touch_initialized = false;
 
 #define ESPIDF_TOUCH_ID         1
 #define ESPIDF_TOUCH_FINGER     1
@@ -21,16 +24,24 @@ void ESPIDF_InitTouch(void)
     bsp_i2c_init();
 
     /* Initialize touch */
-    bsp_touch_new(NULL, &touch_handle);
-
-    SDL_AddTouch(ESPIDF_TOUCH_ID, SDL_TOUCH_DEVICE_DIRECT, "Touchscreen");
-    ESP_LOGI("SDL", "ESPIDF_InitTouch");
+    esp_err_t ret = bsp_touch_new(NULL, &touch_handle);
+    if (ret == ESP_OK) {
+        touch_initialized = true;
+        SDL_AddTouch(ESPIDF_TOUCH_ID, SDL_TOUCH_DEVICE_DIRECT, "Touchscreen");
+        ESP_LOGI("SDL", "ESPIDF_InitTouch succeeded");
+    } else {
+        touch_initialized = false;
+        ESP_LOGW("SDL", "ESPIDF_InitTouch failed: %s", esp_err_to_name(ret));
+    }
 #endif
 }
 
 void ESPIDF_PumpTouchEvent(void)
 {
 #if BSP_CAPS_TOUCH == 1
+    if (!touch_initialized) {
+        return;
+    }
     SDL_Window *window;
     SDL_VideoDisplay *display;
     static bool was_pressed = false;

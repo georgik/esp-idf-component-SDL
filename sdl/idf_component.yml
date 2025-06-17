@@ -3,7 +3,7 @@ description: Simple DirectMedia Layer (SDL) Version 3.2 (ESP-IDF wrapper on upst
 license: Zlib
 url: https://www.libsdl.org/
 repository: https://github.com/georgik/SDL/tree/feature/esp-idf
-version: 3.2.5~1
+version: 3.2.5~2
 
 files:
   exclude:
