@@ -1,6 +1,6 @@
 # Snow Example
 
-SDL3 example with falling snow for ESP32.
+SDL 3.3.0 example with falling snow for ESP32.
 
 ## Create Project from Example Code
 
@@ -11,6 +11,8 @@ idf.py create-project-from-example "georgik/sdl:snow"
 ## Build
 
 ### Build for ESP32-S3-BOX-3
+
+Uses ESP-BOX-3 NoGLib BSP (v3.0.2) for SDL-only applications without LVGL dependency:
 
 ```shell
 idf.py @boards/esp-box-3.cfg build flash monitor

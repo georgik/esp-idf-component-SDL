@@ -1,6 +1,6 @@
-# Simple Direct Layer - SDL3 (ESP-IDF port)
+# Simple Direct Layer - SDL 3.3.0 (ESP-IDF port)
 
-This is component wrapper for upstream SDL3 for ESP-IDF.
+This is component wrapper for upstream SDL 3.3.0 for ESP-IDF.
 
 Detailed documentation is in the [component directory sdl](sdl/README.md)
 

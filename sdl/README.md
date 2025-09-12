@@ -1,6 +1,6 @@
-# Simple Direct Layer - SDL3 (ESP-IDF port)
+# Simple Direct Layer - SDL 3.3.0 (ESP-IDF port)
 
-This is component wrapper for upstream SDL3 for ESP-IDF.
+This is component wrapper for upstream SDL 3.3.0 for ESP-IDF.
 
 The HW layer is using [ESP-BSP](https://components.espressif.com/components?q=tags:bsp).
 
@@ -29,7 +29,7 @@ Support is achieved by using [ESP-BSP](https://github.com/espressif/esp-bsp)
 
 - ESP32-C3-LcdKit
 - ESP32-C6-DevKit
-- ESP32-S3-BOX-3
+- ESP32-S3-BOX-3 (using esp-box-3_noglib BSP for SDL-only applications)
 - ESP32-P4 Evaluation Kit
   - with PPA for scaling the screen
 - M5Stack CoreS3

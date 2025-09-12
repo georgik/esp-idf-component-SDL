@@ -102,6 +102,9 @@ typedef unsigned int uintptr_t;
 /* Enable the stub sensor driver (src/sensor/dummy/\*.c) */
 // #define SDL_SENSOR_DISABLED 1
 
+/* Enable the stub tray driver (src/tray/dummy/\*.c) */
+#define SDL_TRAY_DUMMY 1
+
 /* Enable the dummy shared object loader (src/loadso/dummy/\*.c) */
 #define SDL_LOADSO_DUMMY 1
 
