@@ -3,67 +3,60 @@
 #include "SDL_espidftouch.h"
 #include <stdbool.h>
 
-#include "bsp/esp-bsp.h"
-#include "bsp/display.h"
-#if BSP_CAPS_TOUCH == 1
-#include "bsp/touch.h"
-esp_lcd_touch_handle_t touch_handle;   // LCD touch handle
-#endif
+#include "SDL_espidfshared.h"
 #include "esp_log.h"
 
 #define ESPIDF_TOUCH_ID         1
 #define ESPIDF_TOUCH_FINGER     1
 
-
 void ESPIDF_InitTouch(void)
 {
-#if BSP_CAPS_TOUCH == 1
-    bsp_i2c_init();
-
-    /* Initialize touch */
-    bsp_touch_new(NULL, &touch_handle);
-
-    SDL_AddTouch(ESPIDF_TOUCH_ID, SDL_TOUCH_DEVICE_DIRECT, "Touchscreen");
-    ESP_LOGI("SDL", "ESPIDF_InitTouch");
-#endif
+    esp_err_t ret = esp_bsp_sdl_touch_init();
+    if (ret == ESP_OK) {
+        SDL_AddTouch(ESPIDF_TOUCH_ID, SDL_TOUCH_DEVICE_DIRECT, "Touchscreen");
+        ESP_LOGI("SDL", "ESPIDF_InitTouch: Touch initialized successfully");
+    } else if (ret == ESP_ERR_NOT_SUPPORTED) {
+        ESP_LOGI("SDL", "ESPIDF_InitTouch: Touch not supported on this board");
+    } else {
+        ESP_LOGE("SDL", "ESPIDF_InitTouch: Failed to initialize touch: %s", esp_err_to_name(ret));
+    }
 }
 
 void ESPIDF_PumpTouchEvent(void)
 {
-#if BSP_CAPS_TOUCH == 1
-    SDL_Window *window;
-    SDL_VideoDisplay *display;
+    esp_bsp_sdl_touch_info_t touch_info;
     static bool was_pressed = false;
-    bool pressed;
+    
+    esp_err_t ret = esp_bsp_sdl_touch_read(&touch_info);
+    if (ret == ESP_ERR_NOT_SUPPORTED) {
+        // Touch not supported, nothing to do
+        return;
+    } else if (ret != ESP_OK) {
+        // Error reading touch, skip this cycle
+        ESP_LOGD("SDL", "Touch read error: %s", esp_err_to_name(ret));
+        return;
+    }
 
-    uint16_t touchpad_x[1] = {0};
-    uint16_t touchpad_y[1] = {0};
-    uint8_t touchpad_cnt = 0;
-
-    esp_lcd_touch_read_data(touch_handle);
-    bool touchpad_pressed = esp_lcd_touch_get_coordinates(touch_handle, touchpad_x, touchpad_y, NULL, &touchpad_cnt, 1);
-    pressed = (touchpad_x[0] != 0 || touchpad_y[0] != 0);
-
-    display = NULL;
+    SDL_Window *window = NULL;
+    SDL_VideoDisplay *display = NULL;
     window = display ? display->fullscreen_window : NULL;
 
-    if (pressed != was_pressed) {
-        was_pressed = pressed;
-        ESP_LOGD("SDL", "touchpad_pressed: %d, [%d, %d]", touchpad_pressed, touchpad_x[0], touchpad_y[0]);
+    if (touch_info.pressed != was_pressed) {
+        was_pressed = touch_info.pressed;
+        ESP_LOGD("SDL", "Touch %s: [%d, %d]", touch_info.pressed ? "pressed" : "released", touch_info.x, touch_info.y);
         SDL_SendTouch(0, ESPIDF_TOUCH_ID, ESPIDF_TOUCH_FINGER,
                       window,
-                      pressed,
-                      touchpad_x[0],
-                      touchpad_y[0],
-                      pressed ? 1.0f : 0.0f);
-    } else if (pressed) {
+                      touch_info.pressed,
+                      touch_info.x,
+                      touch_info.y,
+                      touch_info.pressed ? 1.0f : 0.0f);
+    } else if (touch_info.pressed) {
         SDL_SendTouchMotion(0, ESPIDF_TOUCH_ID, ESPIDF_TOUCH_FINGER,
                             window,
-                            touchpad_x[0],
-                            touchpad_y[0],
+                            touch_info.x,
+                            touch_info.y,
                             1.0f);
     }
-#endif
 }
 
 int ESPIDF_CalibrateTouch(float screenX[], float screenY[], float touchX[], float touchY[])

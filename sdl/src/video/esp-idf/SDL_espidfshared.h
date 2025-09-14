@@ -3,8 +3,8 @@
 
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
-// ABSTRACTION LAYER: Use sdl_bsp instead of direct BSP includes
-#include "sdl_bsp.h"
+// ABSTRACTION LAYER: Use esp_bsp_sdl instead of direct BSP includes
+#include "esp_bsp_sdl.h"
 // Include touch handle type
 #include "esp_lcd_touch.h"
 

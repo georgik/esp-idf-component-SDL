@@ -121,8 +121,8 @@ idf_component_register(SRCS
                         "src/video/esp-idf/SDL_espidfframebuffer.c"
                         "src/video/esp-idf/SDL_espidfvideo.c"
 
-                        # Touch: ESP-IDF (temporarily disabled for testing)
-                        # "src/video/esp-idf/SDL_espidftouch.c"
+                        # Touch: ESP-IDF
+                        "src/video/esp-idf/SDL_espidftouch.c"
 
                         "SDL/src/SDL_properties.c"
                         "SDL/src/SDL_utils.c"
@@ -155,7 +155,7 @@ idf_component_register(SRCS
                         "SDL/src/video"
                         "SDL/include/SDL3"
                     REQUIRES
-                        sdl_bsp
+                        georgik__sdl_bsp
                     PRIV_REQUIRES
                         ${extra_reqs}
 )
