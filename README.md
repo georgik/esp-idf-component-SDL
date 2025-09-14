@@ -2,9 +2,13 @@
 
 This is component wrapper for upstream SDL 3.3.0 for ESP-IDF.
 
-Detailed documentation is in the [component directory sdl](sdl/README.md)
+The HW layer is using [ESP-BSP](https://components.espressif.com/components?q=tags:bsp).
 
-The ESP-IDF component is available at [Component Registry](https://components.espressif.com/components/georgik/sdl/versions)
+In the project CMakeLists.txt it's necessary to set `ENV{BUILD_BOARD}` to name of BSP.
+
+```
+set(ENV{BUILD_BOARD} ${BUILD_BOARD})
+```
 
 ## Examples
 
@@ -14,17 +18,20 @@ The ESP-IDF component is available at [Component Registry](https://components.es
 - https://github.com/georgik/OpenTyrian
 - https://github.com/georgik/esp32-weather-display
 
-### Create Project from Example Code
-
-```shell
-idf.py create-project-from-example "georgik/sdl:snow"
-```
-
-Detailed build documentation is available in the [example directory](examples/snow/README.md).
-
 ### Embedded Swift Examples
 
 - https://github.com/georgik/esp32-sdl3-swift-example/
 - https://github.com/georgik/esp32-swift-weather-display
+
+## Supported
+
+Support is achieved by using [ESP-BSP](https://github.com/espressif/esp-bsp)
+
+- ESP32-C3-LcdKit
+- ESP32-C6-DevKit
+- ESP32-S3-BOX-3 (using esp-box-3_noglib BSP for SDL-only applications)
+- ESP32-P4 Evaluation Kit
+  - with PPA for scaling the screen
+- M5Stack CoreS3
 
 
