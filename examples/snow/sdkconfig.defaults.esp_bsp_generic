@@ -1,0 +1,68 @@
+# ESP BSP Generic Configuration Defaults
+# Configurable BSP for any ESP32 DevKit with custom display/touch setup
+
+# Board selection
+CONFIG_ESP_BSP_SDL_BOARD_ESP_BSP_GENERIC=y
+CONFIG_ESP_BSP_SDL_BOARD_NAME="ESP BSP Generic (Configurable)"
+
+# Target configuration - can be used with any ESP32 variant
+# Default to ESP32-S3, but users can override via menuconfig
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=32000
+
+# Memory Configuration - Conservative defaults, can be customized
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_TYPE_ESPPSRAM64=y
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=16384
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=32768
+
+# Heap allocation preferences 
+CONFIG_HEAP_ALLOCATION_POLICY_DEFAULT=1
+
+# PSRAM optimizations
+CONFIG_SPIRAM_USE_MEMMAP=y
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
+CONFIG_SPIRAM_SPEED_80M=y
+
+# Performance optimizations
+CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP=3
+
+# Display-specific optimizations (conservative default)
+CONFIG_LCD_DRAW_BUFF_SIZE=8192
+
+# ESP BSP Generic specific settings
+CONFIG_BSP_GENERIC_ENABLED=y
+
+# Default GPIO assignments (commonly used pins, user configurable)
+# These can be changed via menuconfig -> Component config -> BSP Generic
+
+# Display configuration defaults
+CONFIG_BSP_GENERIC_DISPLAY_ENABLED=y
+CONFIG_BSP_GENERIC_DISPLAY_SPI=y
+CONFIG_BSP_GENERIC_DISPLAY_ST7789=y  # Popular display choice
+CONFIG_BSP_GENERIC_DISPLAY_WIDTH=240
+CONFIG_BSP_GENERIC_DISPLAY_HEIGHT=320
+
+# Touch configuration defaults (optional)
+CONFIG_BSP_GENERIC_TOUCH_ENABLED=y
+CONFIG_BSP_GENERIC_TOUCH_I2C=y
+
+# Button configuration (up to 5 buttons supported)
+CONFIG_BSP_GENERIC_BUTTON_ENABLED=y
+CONFIG_BSP_GENERIC_BUTTON_COUNT=2
+
+# LED configuration
+CONFIG_BSP_GENERIC_LED_ENABLED=y
+CONFIG_BSP_GENERIC_LED_GPIO_COUNT=1
+CONFIG_BSP_GENERIC_LED_RGB_ENABLED=y
+
+# File system support
+CONFIG_BSP_GENERIC_SPIFFS_ENABLED=y
+CONFIG_BSP_GENERIC_USD_ENABLED=y
+
+# LVGL support (enabled for Generic BSP)
+CONFIG_BSP_GENERIC_LVGL_ENABLED=y

@@ -1,17 +1,17 @@
-# ESP32-S3-BOX-3 Board Configuration Defaults
-# OCTAL PSRAM available
+# ESP32-S3 Eye Board Configuration Defaults
+# Camera development board, 240x240 LCD, 8MB Flash + 8MB OCTAL PSRAM
 
 # Board selection
-CONFIG_ESP_BSP_SDL_BOARD_ESP_BOX_3=y
-CONFIG_ESP_BSP_SDL_BOARD_NAME="ESP32-S3-BOX-3"
+CONFIG_ESP_BSP_SDL_BOARD_ESP32_S3_EYE=y
+CONFIG_ESP_BSP_SDL_BOARD_NAME="ESP32-S3 Eye"
 
 # Target and basic configuration
 CONFIG_IDF_TARGET="esp32s3"
-CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=32000
 
-# Memory Configuration - OCTAL PSRAM
+# Memory Configuration - 8MB OCTAL PSRAM
 CONFIG_SPIRAM=y
 CONFIG_SPIRAM_MODE_OCT=y
 CONFIG_SPIRAM_TYPE_ESPPSRAM64=y
@@ -30,8 +30,18 @@ CONFIG_SPIRAM_SPEED_80M=y
 # Performance optimizations with OCTAL PSRAM
 CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP=3
 
-# Display-specific optimizations (can use even larger buffers with OCTAL PSRAM)
-CONFIG_LCD_DRAW_BUFF_SIZE=16384
+# Display-specific optimizations (240x240 circular LCD)
+CONFIG_LCD_DRAW_BUFF_SIZE=8192
 
-# Audio support (ESP32-S3-BOX-3 has audio codec)
-CONFIG_AUDIO_BOARD_ESP32_S3_BOX_3=y
+# Camera support (OV2640)
+CONFIG_CAMERA_ENABLED=y
+CONFIG_CAMERA_OV2640_SUPPORT=y
+
+# Digital microphone support
+CONFIG_DIGITAL_MICROPHONE_ENABLED=y
+
+# Accelerometer support
+CONFIG_ACCELEROMETER_ENABLED=y
+
+# uSD card support
+CONFIG_USD_CARD_ENABLED=y

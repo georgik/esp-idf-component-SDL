@@ -6,7 +6,6 @@
 #include "SDL_espidfevents.h"
 #include "SDL_espidftouch.h"
 
-// BSP includes are handled by the abstraction layer (SDL_espidfshared.h)
 #include "esp_log.h"
 
 #ifdef SDL_VIDEO_DRIVER_PRIVATE
@@ -19,6 +18,7 @@
 
 esp_lcd_panel_handle_t panel_handle = NULL;
 esp_lcd_panel_io_handle_t panel_io_handle = NULL;
+esp_bsp_sdl_display_config_t display_config;
 
 static bool ESPIDF_VideoInit(SDL_VideoDevice *_this);
 static void ESPIDF_VideoQuit(SDL_VideoDevice *_this);
@@ -58,30 +58,30 @@ VideoBootStrap PRIVATE_bootstrap = {
 
 static bool ESPIDF_VideoInit(SDL_VideoDevice *_this)
 {
-    esp_bsp_sdl_display_config_t display_config;
-    
-    // Initialize the abstraction layer
-    ESP_ERROR_CHECK(esp_bsp_sdl_init(&display_config, &panel_handle, &panel_io_handle));
-    
-    // Set up SDL display mode using abstraction layer data
     SDL_DisplayMode mode;
     SDL_zero(mode);
+    
+    // Initialize the ESP-BSP SDL abstraction layer
+    esp_err_t ret = esp_bsp_sdl_init(&display_config, &panel_handle, &panel_io_handle);
+    if (ret != ESP_OK) {
+        printf("Failed to initialize ESP-BSP SDL abstraction: %s\n", esp_err_to_name(ret));
+        return false;
+    }
+    
+    printf("ESP-IDF video init for board: %s\n", esp_bsp_sdl_get_board_name());
+    printf("Display resolution: %dx%d\n", display_config.width, display_config.height);
+    
     mode.format = display_config.pixel_format;
     mode.w = display_config.width;
     mode.h = display_config.height;
-    printf("ESP-IDF video init: %dx%d\n", mode.w, mode.h);
     
     if (SDL_AddBasicVideoDisplay(&mode) == 0) {
         return false;
     }
 
-    // Turn on backlight
     ESP_ERROR_CHECK(esp_bsp_sdl_backlight_on());
-
-    // Enable display
     ESP_ERROR_CHECK(esp_bsp_sdl_display_on_off(true));
 
-    // Initialize touch if available
     if (display_config.has_touch) {
         ESPIDF_InitTouch();
     }

@@ -9,41 +9,42 @@
 #define ESPIDF_TOUCH_ID         1
 #define ESPIDF_TOUCH_FINGER     1
 
+
 void ESPIDF_InitTouch(void)
 {
     esp_err_t ret = esp_bsp_sdl_touch_init();
     if (ret == ESP_OK) {
         SDL_AddTouch(ESPIDF_TOUCH_ID, SDL_TOUCH_DEVICE_DIRECT, "Touchscreen");
-        ESP_LOGI("SDL", "ESPIDF_InitTouch: Touch initialized successfully");
+        ESP_LOGI("SDL", "ESPIDF_InitTouch - Touch support enabled");
     } else if (ret == ESP_ERR_NOT_SUPPORTED) {
-        ESP_LOGI("SDL", "ESPIDF_InitTouch: Touch not supported on this board");
+        ESP_LOGI("SDL", "ESPIDF_InitTouch - Touch not supported on this board");
     } else {
-        ESP_LOGE("SDL", "ESPIDF_InitTouch: Failed to initialize touch: %s", esp_err_to_name(ret));
+        ESP_LOGE("SDL", "ESPIDF_InitTouch - Touch initialization failed: %s", esp_err_to_name(ret));
     }
 }
 
 void ESPIDF_PumpTouchEvent(void)
 {
-    esp_bsp_sdl_touch_info_t touch_info;
-    static bool was_pressed = false;
-    
-    esp_err_t ret = esp_bsp_sdl_touch_read(&touch_info);
-    if (ret == ESP_ERR_NOT_SUPPORTED) {
-        // Touch not supported, nothing to do
+    if (!display_config.has_touch) {
         return;
-    } else if (ret != ESP_OK) {
-        // Error reading touch, skip this cycle
-        ESP_LOGD("SDL", "Touch read error: %s", esp_err_to_name(ret));
+    }
+    
+    SDL_Window *window;
+    SDL_VideoDisplay *display;
+    static bool was_pressed = false;
+    esp_bsp_sdl_touch_info_t touch_info;
+
+    esp_err_t ret = esp_bsp_sdl_touch_read(&touch_info);
+    if (ret != ESP_OK) {
         return;
     }
 
-    SDL_Window *window = NULL;
-    SDL_VideoDisplay *display = NULL;
+    display = NULL;
     window = display ? display->fullscreen_window : NULL;
 
     if (touch_info.pressed != was_pressed) {
         was_pressed = touch_info.pressed;
-        ESP_LOGD("SDL", "Touch %s: [%d, %d]", touch_info.pressed ? "pressed" : "released", touch_info.x, touch_info.y);
+        ESP_LOGD("SDL", "touch state: %d, [%d, %d]", touch_info.pressed, touch_info.x, touch_info.y);
         SDL_SendTouch(0, ESPIDF_TOUCH_ID, ESPIDF_TOUCH_FINGER,
                       window,
                       touch_info.pressed,

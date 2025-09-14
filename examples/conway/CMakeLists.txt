@@ -98,12 +98,13 @@ endif()
 
 set(COMPONENTS
     main
+    esp_bsp_sdl
+    georgik__sdl
 ) # "Trim" the build. Include the minimal set of components; main and anything it depends on.
-# Note: Both SDL and sdl_bsp are now managed as dependencies in main/idf_component.yml
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
-project(snow)
+project(conway)
 
 # get_filename_component(configName "${CMAKE_BINARY_DIR}" NAME)
 # list(APPEND EXTRA_COMPONENT_DIRS "${CMAKE_SOURCE_DIR}/components/esp_littlefs")

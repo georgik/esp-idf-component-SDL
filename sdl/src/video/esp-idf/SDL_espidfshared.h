@@ -3,16 +3,16 @@
 
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
-// ABSTRACTION LAYER: Use esp_bsp_sdl instead of direct BSP includes
 #include "esp_bsp_sdl.h"
-// Include touch handle type
-#include "esp_lcd_touch.h"
 
 // Shared handles
 extern esp_lcd_panel_handle_t panel_handle;
 extern esp_lcd_panel_io_handle_t panel_io_handle;
 
-// Touch handle (if supported by current board configuration)
+extern esp_bsp_sdl_display_config_t display_config;
+
+#ifdef ESP_BSP_SDL_TOUCH_SUPPORT
 extern esp_lcd_touch_handle_t touch_handle;
+#endif
 
 #endif /* SDL_espidfshared_h_ */
