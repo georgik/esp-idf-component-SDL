@@ -27,6 +27,9 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 #include "timer/SDL_timer_c.h"
 
 #ifdef SDL_PLATFORM_EMSCRIPTEN
@@ -137,52 +140,32 @@ Uint64 SDL_GetPerformanceFrequency(void)
 
 void SDL_SYS_DelayNS(Uint64 ns)
 {
+#ifdef HAVE_NANOSLEEP
     int was_error;
-
-#ifdef HAVE_NANOSLEEP
     struct timespec tv, remaining;
-#else
-    struct timeval tv;
-    Uint64 then, now, elapsed;
-#endif
-
-#ifdef SDL_PLATFORM_EMSCRIPTEN
-    if (emscripten_has_asyncify() && SDL_GetHintBoolean(SDL_HINT_EMSCRIPTEN_ASYNCIFY, true)) {
-        // pseudo-synchronous pause, used directly or through e.g. SDL_WaitEvent
-        emscripten_sleep(ns / SDL_NS_PER_MS);
-        return;
-    }
-#endif
-
+    
     // Set the timeout interval
-#ifdef HAVE_NANOSLEEP
     remaining.tv_sec = (time_t)(ns / SDL_NS_PER_SECOND);
     remaining.tv_nsec = (long)(ns % SDL_NS_PER_SECOND);
-#else
-    then = SDL_GetTicksNS();
-#endif
+    
     do {
         errno = 0;
-
-#ifdef HAVE_NANOSLEEP
         tv.tv_sec = remaining.tv_sec;
         tv.tv_nsec = remaining.tv_nsec;
         was_error = nanosleep(&tv, &remaining);
-#else
-        // Calculate the time interval left (in case of interrupt)
-        now = SDL_GetTicksNS();
-        elapsed = (now - then);
-        then = now;
-        if (elapsed >= ns) {
-            break;
-        }
-        ns -= elapsed;
-        tv.tv_sec = (ns / SDL_NS_PER_SECOND);
-        tv.tv_usec = SDL_NS_TO_US(ns % SDL_NS_PER_SECOND);
-
-        was_error = select(0, NULL, NULL, NULL, &tv);
-#endif // HAVE_NANOSLEEP
     } while (was_error && (errno == EINTR));
+#else
+    // ESP-IDF specific delay using FreeRTOS
+    // Convert nanoseconds to ticks (minimum 1 tick)
+    TickType_t ticks = pdMS_TO_TICKS(ns / SDL_NS_PER_MS);
+    if (ticks == 0 && ns > 0) {
+        ticks = 1;  // Ensure at least 1 tick for non-zero delays
+    }
+    
+    if (ticks > 0) {
+        vTaskDelay(ticks);
+    }
+#endif // HAVE_NANOSLEEP
 }
 
 #endif // SDL_TIMER_UNIX
