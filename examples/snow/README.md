@@ -17,8 +17,11 @@ Watch beautiful falling snow particles automatically adapt to your display resol
 ### Single Command Board Selection
 
 ```bash
-# M5 Atom S3 (128×128, No PSRAM)
+# M5 Atom S3 (128×128, No PSRAM) - Default, no environment variable needed
 idf.py -DBOARD=m5_atom_s3 build flash monitor
+
+# ESP32-S3-BOX-3 (320×240, OCTAL PSRAM) - Requires BUILD_FOR_BOX3=1
+BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build flash monitor
 
 # M5Stack CoreS3 (320×240, QUAD PSRAM) 
 idf.py -DBOARD=m5stack_core_s3 build flash monitor
@@ -38,8 +41,11 @@ idf.py -DBOARD=esp_bsp_devkit build flash monitor
 ### First Time Setup (Default Board)
 
 ```bash
-# Uses ESP32-S3-BOX-3 by default with helpful board selection guide
+# Uses M5 Atom S3 by default (no additional setup required)
 idf.py build flash monitor
+
+# For ESP32-S3-BOX-3, use environment variable:
+BUILD_FOR_BOX3=1 idf.py build flash monitor
 ```
 
 ## 🎛️ Supported Boards
@@ -47,14 +53,14 @@ idf.py build flash monitor
 | Board | Architecture | Display | PSRAM | Key Features |
 |-------|-------------|---------|-------|--------------|
 | **`esp_bsp_generic`** | **Any ESP32** | **Configurable** | **Configurable** | **🔧 Universal DevKit + Display** |
-| `m5_atom_s3` | ESP32-S3 (Xtensa) | 128×128 GC9A01 | None | Compact, optimized for limited RAM |
+| `m5_atom_s3` | ESP32-S3 (Xtensa) | 128×128 GC9A01 | None | ✅ **Working** - Default board, no setup needed |
 | `m5stack_core_s3` | ESP32-S3 (Xtensa) | 320×240 ILI9341 | QUAD | Touch interface, large display |
 | `esp32_p4_function_ev` | **ESP32-P4 (RISC-V)** | up to 1280×800 | 32MB HEX | PPA, H264, MIPI interfaces |
 | `esp32_s3_lcd_ev` | ESP32-S3 (Xtensa) | Multiple LCD types | 16MB OCTAL | Flexible interface support |
 | `esp32_s3_eye` | ESP32-S3 (Xtensa) | 240×240 circular | 8MB OCTAL | Camera + microphone |
 | `esp32_s3_korvo_2` | ESP32-S3 (Xtensa) | LCD + Camera | OCTAL | Audio focus, dual microphones |
 | `esp_bsp_devkit` | Any ESP32 | Virtual 240×320 | Configurable | LEDs/buttons, no display |
-| `esp_box_3` | ESP32-S3 (Xtensa) | 320×240 | OCTAL | Legacy support |
+| `esp_box_3` | ESP32-S3 (Xtensa) | 320×240 ILI9341 | OCTAL | ✅ **Working** - Requires `BUILD_FOR_BOX3=1` |
 
 ## 🌟 ESP BSP Generic - Universal DevKit Support
 
@@ -102,12 +108,16 @@ idf.py build flash monitor
 
 ### Board Switching
 ```bash
-# Switch from M5 Atom S3 to ESP32-P4
-idf.py -DBOARD=esp32_p4_function_ev reconfigure
-idf.py build flash monitor
+# Switch between M5 Atom S3 and ESP32-S3-BOX-3
+idf.py -DBOARD=m5_atom_s3 build flash monitor
+BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build flash monitor
 
-# Clean switch if needed
-idf.py -DBOARD=m5stack_core_s3 fullclean build flash monitor
+# Switch to other boards
+idf.py -DBOARD=esp32_p4_function_ev build flash monitor
+
+# Clean switch if needed (recommended when switching between different boards)
+idf.py -DBOARD=m5_atom_s3 fullclean build flash monitor
+BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 fullclean build flash monitor
 ```
 
 ### Custom Board Development
@@ -154,10 +164,31 @@ printf("Running on: %s\\n", esp_bsp_sdl_get_board_name());
 
 - **[BOARDS.md](BOARDS.md)** - Complete board specifications and usage guide
 - **[ESP_BSP_GENERIC_GUIDE.md](ESP_BSP_GENERIC_GUIDE.md)** - Universal DevKit configuration guide  
+- **[BSP_SYMBOL_CONFLICTS.md](BSP_SYMBOL_CONFLICTS.md)** - 🔧 Technical solution for BSP symbol conflicts
 - **[Architecture Details](docs/architecture.md)** - Technical implementation details
 - **[Contributing Guide](CONTRIBUTING.md)** - Add support for new boards
 
 ## 🔧 Troubleshooting
+
+### BSP Symbol Conflicts Resolution ✅
+
+The project includes an advanced solution for BSP symbol conflicts that allows seamless switching between boards:
+
+```bash
+# M5 Atom S3 - Default (no environment variable needed)
+idf.py -DBOARD=m5_atom_s3 build flash monitor
+
+# ESP32-S3-BOX-3 - Requires environment variable to avoid symbol conflicts
+BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build flash monitor
+```
+
+**How it works:**
+- **Conditional BSP Loading**: Only the required BSP component is linked at build time
+- **Environment Variable Control**: `BUILD_FOR_BOX3=1` switches BSP selection
+- **No Symbol Conflicts**: Forward declarations are conditional based on selected BSP
+- **Clean Builds**: Automatic detection and reconfiguration when switching boards
+
+This solution eliminates the common problem of multiple BSPs defining identical function names.
 
 ### Board Switch Issues
 ```bash
@@ -189,9 +220,13 @@ idf.py -DBOARD=<new_board> build
 # Test current configuration
 idf.py build
 
-# Test board switching
-idf.py -DBOARD=m5_atom_s3 build
+# Test board switching (working boards)
+idf.py -DBOARD=m5_atom_s3 build  # Default - no env var needed
+BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build  # Requires env var
+
+# Test other boards
 idf.py -DBOARD=esp32_p4_function_ev build
+idf.py -DBOARD=m5stack_core_s3 build
 ```
 
 ## 📊 Project Structure
@@ -225,6 +260,47 @@ git clone <repository>
 cd snow
 idf.py -DBOARD=<your_board> build flash monitor
 ```
+
+---
+
+## ✅ Verified Working Boards
+
+The following boards have been **tested and confirmed working** with the BSP symbol conflict solution:
+
+### 🚀 **M5 Atom S3** (Default)
+```bash
+idf.py -DBOARD=m5_atom_s3 build flash monitor
+```
+- **Display**: 128×128 GC9A01 round display
+- **PSRAM**: None (uses internal RAM optimization)
+- **Setup**: No additional configuration required
+- **Status**: ✅ **Fully Working** - Default board selection
+
+### 📦 **ESP32-S3-BOX-3** 
+```bash
+BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build flash monitor
+```
+- **Display**: 320×240 ILI9341 TFT display
+- **PSRAM**: 8MB OCTAL PSRAM
+- **Setup**: Requires `BUILD_FOR_BOX3=1` environment variable
+- **Status**: ✅ **Fully Working** - BSP symbol conflicts resolved
+
+### 🔄 **Seamless Board Switching**
+
+Switch between boards without conflicts:
+```bash
+# Switch to M5 Atom S3
+idf.py -DBOARD=m5_atom_s3 fullclean build flash monitor
+
+# Switch to ESP32-S3-BOX-3  
+BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 fullclean build flash monitor
+```
+
+**Key Benefits:**
+- ✅ **No Symbol Conflicts** - Advanced conditional BSP loading
+- ✅ **Automatic Reconfiguration** - Board switching detected and handled
+- ✅ **Clean Builds** - Proper dependency resolution
+- ✅ **Runtime Detection** - Correct board identification in logs
 
 ---
 

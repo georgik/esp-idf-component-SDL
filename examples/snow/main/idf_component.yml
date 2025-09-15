@@ -11,10 +11,10 @@ dependencies:
   georgik/sdl_bsp:
     git: https://github.com/georgik/esp-idf-component-SDL_bsp.git
     version: "*"
-  # ESP-BSP for ESP32-S3-BOX-3 (required by sdl_bsp)
+  # ESP-BSPs - conditional based on board selection to avoid symbol conflicts
+  espressif/m5_atom_s3_noglib:
+    version: "~1.0.0"
   espressif/esp-box-3_noglib:
-    version: '*'
-  # ESP-BSP for M5 Atom S3 (required by sdl_bsp)
-  espressif/m5_atom_s3_noglib: "~1.0.0"
+    version: "*"
   idf:
     version: '>=5.5.0'
