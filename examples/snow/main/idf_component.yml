@@ -29,6 +29,10 @@ dependencies:
     version: "~2.0.1"
     matches:
       - if: "$CONFIG{SDL_BSP_ESP32_C3_LCDKIT} == True"
+  espressif/esp32_s3_lcd_ev_board_noglib:
+    version: "~4.0.0"
+    matches:
+      - if: "$CONFIG{SDL_BSP_ESP32_S3_LCD_EV_BOARD} == True"
   #espressif/esp32_c3_lcdkit_noglib:
   #  version: "*"
   #  matches:
