@@ -10,11 +10,20 @@ dependencies:
   # SDL BSP abstraction layer
   georgik/sdl_bsp:
     git: https://github.com/georgik/esp-idf-component-SDL_bsp.git
-    version: "*"
-  # ESP-BSPs - conditional based on board selection to avoid symbol conflicts
+  # Board-specific BSP dependencies (override sdl_bsp's dependencies)
+  # ESP32-S3 boards only
   espressif/m5_atom_s3_noglib:
-    version: "~1.0.0"
+    version: "*"
+    rules:
+      - if: "target == esp32s3"
   espressif/esp-box-3_noglib:
     version: "*"
+    rules:
+      - if: "target == esp32s3"
+  # ESP32-P4 boards only  
+  espressif/esp32_p4_function_ev_board_noglib:
+    version: "*"
+    rules:
+      - if: "target == esp32p4"
   idf:
     version: '>=5.5.0'

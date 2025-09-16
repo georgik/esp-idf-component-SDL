@@ -2,13 +2,14 @@ cmake_minimum_required(VERSION 3.16)
 
 # ESP-BSP SDL Universal Board Selection
 # Usage: idf.py -DBOARD=m5_atom_s3 build
-# Available: m5_atom_s3, m5stack_core_s3, esp_box_3
+# Available: m5_atom_s3, m5stack_core_s3, esp_box_3, esp32_p4_function_ev
 # Default: esp_box_3 (if not specified)
 #
 # Examples:
 #   idf.py build                           # Uses esp_box_3 (default)
 #   idf.py -DBOARD=m5_atom_s3 build        # Uses M5 Atom S3
 #   idf.py -DBOARD=m5stack_core_s3 build   # Uses M5Stack CoreS3
+#   idf.py -DBOARD=esp32_p4_function_ev build  # Uses ESP32-P4 Function EV Board
 #
 # To switch boards: idf.py -DBOARD=<new_board> reconfigure
 
@@ -34,9 +35,10 @@ if(show_board_help)
     message(STATUS "  idf.py -DBOARD=<board_name> build")
     message(STATUS "")
     message(STATUS "Available boards:")
-    message(STATUS "  m5_atom_s3      - M5 Atom S3 (128x128, no PSRAM)")
-    message(STATUS "  m5stack_core_s3 - M5Stack CoreS3 (320x240, QUAD PSRAM)")
-    message(STATUS "  esp_box_3       - ESP32-S3-BOX-3 (320x240, OCTAL PSRAM)")
+    message(STATUS "  m5_atom_s3        - M5 Atom S3 (128x128, no PSRAM)")
+    message(STATUS "  m5stack_core_s3   - M5Stack CoreS3 (320x240, QUAD PSRAM)")
+    message(STATUS "  esp_box_3         - ESP32-S3-BOX-3 (320x240, OCTAL PSRAM)")
+    message(STATUS "  esp32_p4_function_ev - ESP32-P4 Function EV Board (1024x600, 32MB HEX PSRAM)")
     message(STATUS "")
     message(STATUS "To switch boards later: idf.py -DBOARD=<board> reconfigure")
     message(STATUS "===============================================")
@@ -59,8 +61,8 @@ if(EXISTS ${BOARD_DEFAULTS_FILE})
     endif()
     message(STATUS "Setting IDF target: ${IDF_TARGET} for board: ${BOARD}")
     
-    # Copy board-specific defaults to main sdkconfig.defaults
-    configure_file(${BOARD_DEFAULTS_FILE} ${CMAKE_SOURCE_DIR}/sdkconfig.defaults COPYONLY)
+    # Note: Board-specific defaults are handled via SDKCONFIG_DEFAULTS environment variable
+    # No need to copy to main directory - this respects -B build isolation
     
     # Check if we need to force clean the sdkconfig (board switch detection)
     set(CURRENT_BOARD_FILE "${CMAKE_SOURCE_DIR}/.current_board")
