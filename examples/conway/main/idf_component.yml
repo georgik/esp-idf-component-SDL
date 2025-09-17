@@ -1,0 +1,48 @@
+# ESP-BSP-SDL Universal Board Support Configuration
+# Using SDL and SDL_bsp components from GitHub repositories
+
+dependencies:
+  # SDL3 component
+  georgik/sdl:
+    git: https://github.com/georgik/esp-idf-component-SDL.git
+    path: "sdl"
+    version: "feature/sdl_bsp"
+  # SDL BSP abstraction layer
+  georgik/sdl_bsp:
+    git: https://github.com/georgik/esp-idf-component-SDL_bsp.git
+    version: "*"
+  # ESP-BSPs - conditional based on board selection to avoid symbol conflicts
+
+  espressif/m5_atom_s3_noglib:
+    version: "~1.0.0"
+    matches:
+      - if: "$CONFIG{SDL_BSP_M5_ATOM_S3} == True"
+  espressif/esp-box-3_noglib:
+    version: "*"
+    matches:
+      - if: "$CONFIG{SDL_BSP_ESP_BOX_3} == True"
+  espressif/m5stack_core_s3_noglib:
+    version: "*"
+    matches:
+      - if: "$CONFIG{SDL_BSP_M5STACK_CORE_S3} == True"
+  espressif/esp32_c3_lcdkit:
+    version: "~2.0.1"
+    matches:
+      - if: "$CONFIG{SDL_BSP_ESP32_C3_LCDKIT} == True"
+  espressif/esp32_s3_lcd_ev_board_noglib:
+    version: "~4.0.0"
+    matches:
+      - if: "$CONFIG{SDL_BSP_ESP32_S3_LCD_EV_BOARD} == True"
+  #espressif/esp32_c3_lcdkit_noglib:
+  #  version: "*"
+  #  matches:
+  #    - if: "$CONFIG{SDL_BSP_ESP32_C3_LCDKIT} == True"
+
+  # M5Stack Tab5 - experimental, using local path to forked ESP-BSP
+  m5stack_tab5_noglib:
+    path: "/Volumes/ssdt5/Users/georgik/projects/esp-bsp/bsp/m5stack_tab5"
+    matches:
+      - if: "$CONFIG{SDL_BSP_M5STACK_TAB5} == True"
+
+  idf:
+    version: '>=5.5.0'
