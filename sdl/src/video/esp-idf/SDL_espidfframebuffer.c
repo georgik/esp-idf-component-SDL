@@ -13,6 +13,7 @@
 #include "freertos/semphr.h"
 #ifdef CONFIG_IDF_TARGET_ESP32P4
 #include "driver/ppa.h"
+#include "esp_lcd_mipi_dsi.h"
 #endif
 
 static const char *TAG = "SDL_espidfframebuffer";
