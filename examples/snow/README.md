@@ -14,38 +14,37 @@ Watch beautiful falling snow particles automatically adapt to your display resol
 
 ## 🚀 Quick Start
 
-### Single Command Board Selection
+### Board Selection Using SDKCONFIG_DEFAULTS Parameter
 
 ```bash
-# M5 Atom S3 (128×128, No PSRAM) - Default, no environment variable needed
-idf.py -DBOARD=m5_atom_s3 build flash monitor
+# M5 Atom S3 (128×128, No PSRAM) - Default
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
 
-# ESP32-S3-BOX-3 (320×240, OCTAL PSRAM) - Requires BUILD_FOR_BOX3=1
-BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build flash monitor
+# ESP32-S3-BOX-3 (320×240, OCTAL PSRAM)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" build flash monitor
 
 # M5Stack CoreS3 (320×240, QUAD PSRAM) 
-idf.py -DBOARD=m5stack_core_s3 build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_core_s3" build flash monitor
+
+# M5Stack Tab5 (1280×720, 32MB PSRAM, ESP32-P4)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build flash monitor
 
 # ESP32-P4 RISC-V (up to 1280×800, 32MB PSRAM)
-idf.py -DBOARD=esp32_p4_function_ev build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp32_p4_function_ev_board" build flash monitor
 
 # Universal: ANY ESP32 DevKit + configurable display
-idf.py -DBOARD=esp_bsp_generic build
-idf.py menuconfig  # Configure your hardware
-idf.py build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" menuconfig  # Configure your hardware
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" build flash monitor
 
 # DevKit testing (virtual display, no physical display needed)
-idf.py -DBOARD=esp_bsp_devkit build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_devkit" build flash monitor
 ```
 
 ### First Time Setup (Default Board)
 
 ```bash
-# Uses M5 Atom S3 by default (no additional setup required)
-idf.py build flash monitor
-
-# For ESP32-S3-BOX-3, use environment variable:
-BUILD_FOR_BOX3=1 idf.py build flash monitor
+# Uses M5 Atom S3 by default
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
 ```
 
 ## 🎛️ Supported Boards
@@ -53,14 +52,15 @@ BUILD_FOR_BOX3=1 idf.py build flash monitor
 | Board | Architecture | Display | PSRAM | Key Features |
 |-------|-------------|---------|-------|--------------|
 | **`esp_bsp_generic`** | **Any ESP32** | **Configurable** | **Configurable** | **🔧 Universal DevKit + Display** |
-| `m5_atom_s3` | ESP32-S3 (Xtensa) | 128×128 GC9A01 | None | ✅ **Working** - Default board, no setup needed |
+| `m5_atom_s3` | ESP32-S3 (Xtensa) | 128×128 GC9A01 | None | ✅ **Working** - Default board |
 | `m5stack_core_s3` | ESP32-S3 (Xtensa) | 320×240 ILI9341 | QUAD | Touch interface, large display |
-| `esp32_p4_function_ev` | **ESP32-P4 (RISC-V)** | up to 1280×800 | 32MB HEX | PPA, H264, MIPI interfaces |
+| `m5stack_tab5` | **ESP32-P4 (RISC-V)** | 1280×720 IPS via MIPI-DSI | 32MB | 5-inch display, GT911 touch |
+| `esp32_p4_function_ev` | **ESP32-P4 (RISC-V)** | up to 1280×800 | 32MB | PPA, H264, MIPI interfaces |
 | `esp32_s3_lcd_ev` | ESP32-S3 (Xtensa) | Multiple LCD types | 16MB OCTAL | Flexible interface support |
 | `esp32_s3_eye` | ESP32-S3 (Xtensa) | 240×240 circular | 8MB OCTAL | Camera + microphone |
 | `esp32_s3_korvo_2` | ESP32-S3 (Xtensa) | LCD + Camera | OCTAL | Audio focus, dual microphones |
 | `esp_bsp_devkit` | Any ESP32 | Virtual 240×320 | Configurable | LEDs/buttons, no display |
-| `esp_box_3` | ESP32-S3 (Xtensa) | 320×240 ILI9341 | OCTAL | ✅ **Working** - Requires `BUILD_FOR_BOX3=1` |
+| `esp_box_3` | ESP32-S3 (Xtensa) | 320×240 ILI9341 | OCTAL | ✅ **Working** |
 
 ## 🌟 ESP BSP Generic - Universal DevKit Support
 
@@ -76,11 +76,10 @@ The **most flexible option** - works with **any ESP32 DevKit**!
 
 ### 🛠️ Configuration
 ```bash
-idf.py -DBOARD=esp_bsp_generic build
-idf.py menuconfig  
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" menuconfig  
 # Navigate to: Component config → BSP Generic
 # Configure display, pins, resolution, touch, etc.
-idf.py build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" build flash monitor
 ```
 
 **📖 Complete Guide**: See [ESP_BSP_GENERIC_GUIDE.md](ESP_BSP_GENERIC_GUIDE.md) for detailed setup instructions.
@@ -109,24 +108,26 @@ idf.py build flash monitor
 ### Board Switching
 ```bash
 # Switch between M5 Atom S3 and ESP32-S3-BOX-3
-idf.py -DBOARD=m5_atom_s3 build flash monitor
-BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" build flash monitor
+
+# Switch to M5Stack Tab5
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build flash monitor
 
 # Switch to other boards
-idf.py -DBOARD=esp32_p4_function_ev build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp32_p4_function_ev_board" build flash monitor
 
 # Clean switch if needed (recommended when switching between different boards)
-idf.py -DBOARD=m5_atom_s3 fullclean build flash monitor
-BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 fullclean build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" fullclean build flash monitor
 ```
 
 ### Custom Board Development
 ```bash
 # Use ESP BSP Generic as starting point
-idf.py -DBOARD=esp_bsp_generic build
-idf.py menuconfig  # Customize hardware configuration
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" build
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" menuconfig  # Customize hardware configuration
 # Save configuration for reuse
-cp sdkconfig sdkconfig.my_custom_board
+cp sdkconfig sdkconfig.defaults.my_custom_board
 ```
 
 ### IDE Integration
@@ -134,11 +135,11 @@ cp sdkconfig sdkconfig.my_custom_board
 **VS Code ESP-IDF Extension:**
 ```json
 {
-    "idf.cmakeCompilerArgs": ["-DBOARD=m5_atom_s3"]
+    "idf.cmakeCompilerArgs": ["-D", "SDKCONFIG_DEFAULTS=sdkconfig.defaults.m5_atom_s3"]
 }
 ```
 
-**CLion:** Project Settings → CMake → CMake options: `-DBOARD=esp32_p4_function_ev`
+**CLion:** Project Settings → CMake → CMake options: `-D SDKCONFIG_DEFAULTS=sdkconfig.defaults.m5_atom_s3`
 
 ## 🎨 Application Benefits
 
@@ -193,8 +194,8 @@ This solution eliminates the common problem of multiple BSPs defining identical 
 ### Board Switch Issues
 ```bash
 # Clean configuration when switching boards
-rm -f .current_board sdkconfig
-idf.py -DBOARD=<new_board> build
+rm -f sdkconfig
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.<new_board>" build
 ```
 
 ### Memory Issues
@@ -221,12 +222,13 @@ idf.py -DBOARD=<new_board> build
 idf.py build
 
 # Test board switching (working boards)
-idf.py -DBOARD=m5_atom_s3 build  # Default - no env var needed
-BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build  # Requires env var
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" build
 
 # Test other boards
-idf.py -DBOARD=esp32_p4_function_ev build
-idf.py -DBOARD=m5stack_core_s3 build
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp32_p4_function_ev_board" build
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_core_s3" build
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build
 ```
 
 ## 📊 Project Structure
@@ -258,7 +260,7 @@ idf.py create-project-from-example "georgik/sdl:snow"
 # Or clone and customize
 git clone <repository>
 cd snow
-idf.py -DBOARD=<your_board> build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.<your_board>" build flash monitor
 ```
 
 ---
@@ -269,7 +271,7 @@ The following boards have been **tested and confirmed working** with the BSP sym
 
 ### 🚀 **M5 Atom S3** (Default)
 ```bash
-idf.py -DBOARD=m5_atom_s3 build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
 ```
 - **Display**: 128×128 GC9A01 round display
 - **PSRAM**: None (uses internal RAM optimization)
@@ -278,34 +280,34 @@ idf.py -DBOARD=m5_atom_s3 build flash monitor
 
 ### 📦 **ESP32-S3-BOX-3** 
 ```bash
-BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" build flash monitor
 ```
 - **Display**: 320×240 ILI9341 TFT display
 - **PSRAM**: 8MB OCTAL PSRAM
-- **Setup**: Requires `BUILD_FOR_BOX3=1` environment variable
+- **Setup**: No additional environment variables needed
 - **Status**: ✅ **Fully Working** - BSP symbol conflicts resolved
+
+### 🖥️ **M5Stack Tab5**
+```bash
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build flash monitor
+```
+- **Display**: 1280×720 IPS display via MIPI-DSI
+- **PSRAM**: 32MB HEX PSRAM
+- **Processor**: ESP32-P4 dual-core RISC-V
+- **Touch**: GT911 touch controller
+- **Status**: ✅ **Fully Working** - Complete 5-inch tablet experience
 
 ### 🔄 **Seamless Board Switching**
 
 Switch between boards without conflicts:
 ```bash
 # Switch to M5 Atom S3
-idf.py -DBOARD=m5_atom_s3 fullclean build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" fullclean build flash monitor
 
 # Switch to ESP32-S3-BOX-3  
-BUILD_FOR_BOX3=1 idf.py -DBOARD=esp_box_3 fullclean build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" fullclean build flash monitor
+
+# Switch to M5Stack Tab5
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" fullclean build flash monitor
 ```
 
-**Key Benefits:**
-- ✅ **No Symbol Conflicts** - Advanced conditional BSP loading
-- ✅ **Automatic Reconfiguration** - Board switching detected and handled
-- ✅ **Clean Builds** - Proper dependency resolution
-- ✅ **Runtime Detection** - Correct board identification in logs
-
----
-
-## 🏆 Achievement Unlocked
-
-**You now have the most advanced embedded SDL system available** - capable of running identical code across radically different hardware configurations, from tiny monochrome displays to massive multimedia screens, spanning multiple processor architectures!
-
-**🌟 Write once, run everywhere - embedded graphics redefined! 🌟**
