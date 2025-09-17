@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
+#include <inttypes.h>
 #include "SDL3/SDL.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -13,24 +14,32 @@
 static int SCREEN_WIDTH = 320;  // Default fallback
 static int SCREEN_HEIGHT = 240; // Default fallback
 
-// Mandelbrot configuration
-#define MAX_ITERATIONS 128
-#define ZOOM_SPEED 0.98f
-#define ANIMATION_SPEED 0.005f
+// Mandelbrot configuration optimized for ESP32-S3
+#define MAX_ITERATIONS 32  // Further reduced for better performance on embedded
+#define FIXED_SHIFT 12     // Fixed point arithmetic: 20.12 format
+#define FIXED_ONE (1 << FIXED_SHIFT)  // 1.0 in fixed point
+#define FIXED_FOUR (4 << FIXED_SHIFT) // 4.0 in fixed point
 
-// Fractal parameters
+// Convert float to fixed point
+#define FLOAT_TO_FIXED(x) ((int32_t)((x) * FIXED_ONE))
+// Convert fixed point to integer
+#define FIXED_TO_INT(x) ((x) >> FIXED_SHIFT)
+// Fixed point multiplication
+#define FIXED_MUL(a, b) (((int64_t)(a) * (b)) >> FIXED_SHIFT)
+
+// Fractal parameters using fixed point arithmetic
 typedef struct {
-    double center_x, center_y;
-    double zoom;
-    double color_offset;
+    int32_t center_x, center_y;  // Fixed point
+    int32_t zoom;                // Fixed point
+    int32_t color_offset;        // Fixed point
     int frame_count;
 } FractalState;
 
 static FractalState fractal_state = {
-    .center_x = -0.7,
-    .center_y = 0.0,
-    .zoom = 1.0,
-    .color_offset = 0.0,
+    .center_x = FLOAT_TO_FIXED(-0.7),  // -0.7 in fixed point
+    .center_y = FLOAT_TO_FIXED(0.0),   // 0.0 in fixed point
+    .zoom = FIXED_ONE,                 // 1.0 in fixed point
+    .color_offset = 0,
     .frame_count = 0
 };
 
@@ -69,59 +78,48 @@ Color hsv_to_rgb(float h, float s, float v) {
     return result;
 }
 
-// Generate beautiful Mandelbrot colors based on iteration count
-Color mandelbrot_color(int iterations, double color_offset) {
+// Generate simple Mandelbrot colors - optimized for ESP32-S3
+Color mandelbrot_color(int iterations, int color_offset) {
     if (iterations == MAX_ITERATIONS) {
         return (Color){0, 0, 0, 255}; // Black for points in the set
     }
     
-    // Create smooth coloring with multiple color schemes
-    float t = (float)iterations / MAX_ITERATIONS;
+    // Simple color scheme that's very fast
+    uint8_t color_val = (iterations * 255) / MAX_ITERATIONS;
     
-    // Cycle through different color schemes
-    int scheme = (int)(color_offset * 4) % 4;
+    // Cycle through simple color schemes
+    int scheme = (color_offset / 32) % 4;  // Change scheme every 32 frames
     
     switch (scheme) {
-        case 0: {
-            // Fire gradient: red -> orange -> yellow
-            float hue = 60.0f * (1.0f - t); // Yellow to red
-            float saturation = 1.0f;
-            float value = t * 0.8f + 0.2f;
-            return hsv_to_rgb(hue, saturation, value);
-        }
-        case 1: {
-            // Ocean gradient: blue -> cyan -> white
-            float hue = 240.0f - 60.0f * t; // Blue to cyan
-            float saturation = 1.0f - t * 0.3f;
-            float value = 0.6f + t * 0.4f;
-            return hsv_to_rgb(hue, saturation, value);
-        }
-        case 2: {
-            // Sunset gradient: purple -> pink -> orange
-            float hue = 270.0f + 60.0f * t; // Purple to orange
-            if (hue > 360.0f) hue -= 360.0f;
-            float saturation = 0.8f + 0.2f * sinf(t * M_PI);
-            float value = 0.5f + t * 0.5f;
-            return hsv_to_rgb(hue, saturation, value);
-        }
-        default: {
-            // Psychedelic: rapid color cycling
-            float hue = fmodf(360.0f * t * 3 + color_offset * 720.0f, 360.0f);
-            float saturation = 0.8f + 0.2f * sinf(t * M_PI * 4);
-            float value = 0.4f + 0.6f * t;
-            return hsv_to_rgb(hue, saturation, value);
-        }
+        case 0: // Red to white gradient
+            return (Color){255, color_val, color_val, 255};
+        case 1: // Green to white gradient
+            return (Color){color_val, 255, color_val, 255};
+        case 2: // Blue to white gradient
+            return (Color){color_val, color_val, 255, 255};
+        default: // Grayscale
+            return (Color){color_val, color_val, color_val, 255};
     }
 }
 
-// Calculate Mandelbrot iterations for a given complex number
-int mandelbrot_iterations(double cx, double cy) {
-    double x = 0.0, y = 0.0;
+// Calculate Mandelbrot iterations using fixed point arithmetic - much faster on ESP32-S3
+int mandelbrot_iterations(int32_t cx, int32_t cy) {
+    int32_t x = 0, y = 0;
     int iterations = 0;
     
-    while (iterations < MAX_ITERATIONS && (x*x + y*y) < 4.0) {
-        double temp = x*x - y*y + cx;
-        y = 2*x*y + cy;
+    while (iterations < MAX_ITERATIONS) {
+        // Calculate x*x and y*y in fixed point
+        int32_t x_squared = FIXED_MUL(x, x);
+        int32_t y_squared = FIXED_MUL(y, y);
+        
+        // Check if magnitude squared >= 4.0
+        if ((x_squared + y_squared) >= FIXED_FOUR) {
+            break;
+        }
+        
+        // Calculate next iteration: z = z^2 + c
+        int32_t temp = x_squared - y_squared + cx;
+        y = FIXED_MUL(2 * x, y) + cy;
         x = temp;
         iterations++;
     }
@@ -129,21 +127,31 @@ int mandelbrot_iterations(double cx, double cy) {
     return iterations;
 }
 
-// Render a strip of the Mandelbrot set (for progressive rendering)
+// Render a strip of the Mandelbrot set using fixed point arithmetic
 void render_mandelbrot_strip(SDL_Renderer *renderer, int start_y, int end_y, FractalState *state) {
-    double scale = 4.0 / (state->zoom * SCREEN_WIDTH);
+    // Calculate scale factor in fixed point
+    // scale = 4.0 / (zoom * SCREEN_WIDTH)
+    // Prevent division by zero
+    int32_t zoom_width = FIXED_MUL(state->zoom, SCREEN_WIDTH * FIXED_ONE);
+    if (zoom_width == 0) zoom_width = 1;
+    
+    int32_t scale = (FIXED_FOUR * FIXED_ONE) / zoom_width;
+    
+    // Precompute half screen dimensions in fixed point
+    int32_t half_width = (SCREEN_WIDTH * FIXED_ONE) / 2;
+    int32_t half_height = (SCREEN_HEIGHT * FIXED_ONE) / 2;
     
     for (int py = start_y; py < end_y; py++) {
         for (int px = 0; px < SCREEN_WIDTH; px++) {
-            // Convert screen coordinates to complex plane
-            double cx = state->center_x + (px - SCREEN_WIDTH/2) * scale;
-            double cy = state->center_y + (py - SCREEN_HEIGHT/2) * scale;
+            // Convert screen coordinates to complex plane using fixed point
+            int32_t cx = state->center_x + FIXED_MUL((px * FIXED_ONE - half_width), scale);
+            int32_t cy = state->center_y + FIXED_MUL((py * FIXED_ONE - half_height), scale);
             
             // Calculate Mandelbrot iterations
             int iterations = mandelbrot_iterations(cx, cy);
             
             // Generate color
-            Color color = mandelbrot_color(iterations, state->color_offset);
+            Color color = mandelbrot_color(iterations, FIXED_TO_INT(state->color_offset));
             
             // Draw pixel
             SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
@@ -152,34 +160,32 @@ void render_mandelbrot_strip(SDL_Renderer *renderer, int start_y, int end_y, Fra
     }
 }
 
-// Update fractal animation parameters
+// Update fractal animation parameters using fixed point
 void update_fractal_animation(FractalState *state) {
-    state->frame_count++;
-    
-    // Animate color cycling
-    state->color_offset += ANIMATION_SPEED;
-    if (state->color_offset > 1.0) state->color_offset -= 1.0;
+    // Animate color cycling (simple integer increment)
+    state->color_offset += 1;
+    if (state->color_offset > 255) state->color_offset = 0;
     
     // Zoom in slowly with periodic resets
-    if (state->frame_count % 600 == 0) {
-        // Reset to a new interesting location
-        const double interesting_points[][2] = {
-            {-0.7, 0.0},           // Main bulb
-            {-0.8, 0.156},         // Spiral region
-            {-0.16, 1.04},         // Top detail
-            {0.3, 0.5},            // Right side detail
-            {-1.25, 0.02},         // Left spike detail
-            {-0.235125, 0.827215}, // Feather detail
-            {-0.4, 0.6},           // Upper bulb connection
+    if (state->frame_count % 300 == 0) {  // Reset every 300 frames (5 sec at 60fps)
+        // Reset to a new interesting location using fixed point
+        const int32_t interesting_points[][2] = {
+            {FLOAT_TO_FIXED(-0.7), FLOAT_TO_FIXED(0.0)},      // Main bulb
+            {FLOAT_TO_FIXED(-0.8), FLOAT_TO_FIXED(0.156)},    // Spiral region  
+            {FLOAT_TO_FIXED(-0.16), FLOAT_TO_FIXED(1.04)},    // Top detail
+            {FLOAT_TO_FIXED(0.3), FLOAT_TO_FIXED(0.5)},       // Right side detail
+            {FLOAT_TO_FIXED(-1.25), FLOAT_TO_FIXED(0.02)},    // Left spike detail
         };
         
-        int location = (state->frame_count / 600) % 7;
+        int location = (state->frame_count / 300) % 5;
         state->center_x = interesting_points[location][0];
         state->center_y = interesting_points[location][1];
-        state->zoom = 1.0;
-    } else if (state->frame_count % 100 == 0) {
-        // Zoom in
-        state->zoom /= ZOOM_SPEED;
+        state->zoom = FIXED_ONE;
+        printf("Reset to location %d\n", location);
+    } else if (state->frame_count % 60 == 0) {  // Zoom every 60 frames (1 sec)
+        // Zoom in using fixed point: zoom = zoom * 1.1
+        state->zoom = FIXED_MUL(state->zoom, FLOAT_TO_FIXED(1.1));
+        printf("Zooming in: %" PRId32 " (fixed point)\n", FIXED_TO_INT(state->zoom));
     }
 }
 
@@ -254,8 +260,10 @@ void* sdl_thread(void* args) {
 
     SDL_Event event;
     int running = 1;
-    int render_strips = 4; // Progressive rendering for better responsiveness
-    int current_strip = 0;
+    printf("Screen resolution: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+    printf("Max iterations: %d\n", MAX_ITERATIONS);
+    printf("Fixed point shift: %d bits\n", FIXED_SHIFT);
+    printf("FIXED_ONE = %d\n", FIXED_ONE);
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -264,30 +272,28 @@ void* sdl_thread(void* args) {
             }
         }
 
-        // Update animation parameters
-        update_fractal_animation(&fractal_state);
+        // Update animation parameters every 120 frames for stability
+        if (fractal_state.frame_count % 120 == 0) {
+            update_fractal_animation(&fractal_state);
+        }
+        fractal_state.frame_count++;
 
-        // Progressive rendering: render one strip per frame
-        int strip_height = SCREEN_HEIGHT / render_strips;
-        int start_y = current_strip * strip_height;
-        int end_y = (current_strip == render_strips - 1) ? SCREEN_HEIGHT : (current_strip + 1) * strip_height;
+        // Clear screen before rendering new frame
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
 
-        render_mandelbrot_strip(renderer, start_y, end_y, &fractal_state);
+        // Render full frame (simplified for testing)
+        render_mandelbrot_strip(renderer, 0, SCREEN_HEIGHT, &fractal_state);
 
-        // Move to next strip
-        current_strip = (current_strip + 1) % render_strips;
-
-        // If we completed a full frame, draw overlay and present
-        if (current_strip == 0) {
-            draw_info_overlay(renderer, &fractal_state);
-            SDL_RenderPresent(renderer);
-            
-            // Print progress periodically
-            if (fractal_state.frame_count % 60 == 0) {
-                printf("Frame %d, Zoom: %.2f, Location: (%.6f, %.6f)\n", 
-                       fractal_state.frame_count, fractal_state.zoom,
-                       fractal_state.center_x, fractal_state.center_y);
-            }
+        // Draw overlay and present
+        draw_info_overlay(renderer, &fractal_state);
+        SDL_RenderPresent(renderer);
+        
+        // Print progress periodically
+        if (fractal_state.frame_count % 60 == 0) {
+            printf("Frame %d, Zoom: %" PRId32 " (fixed), Location: (%" PRId32 ", %" PRId32 ") (fixed)\n", 
+                   fractal_state.frame_count, FIXED_TO_INT(fractal_state.zoom),
+                   FIXED_TO_INT(fractal_state.center_x), FIXED_TO_INT(fractal_state.center_y));
         }
 
         vTaskDelay(pdMS_TO_TICKS(16)); // ~60 FPS target (progressive rendering)
@@ -305,7 +311,7 @@ void app_main(void) {
 
     pthread_attr_t attr;
     pthread_attr_init(&attr);
-    pthread_attr_setstacksize(&attr, 32768);  // Standard stack size
+    pthread_attr_setstacksize(&attr, 65536);  // Larger stack size for floating point calculations
 
     int ret = pthread_create(&sdl_pthread, &attr, sdl_thread, NULL);
     if (ret != 0) {
