@@ -2,10 +2,16 @@
 # No PSRAM available on M5 Atom S3
 
 # Board selection
-CONFIG_ESP_BSP_SDL_BOARD_M5_ATOM_S3=y
-CONFIG_ESP_BSP_SDL_BOARD_NAME="M5 Atom S3"
+CONFIG_SDL_BSP_M5_ATOM_S3=y
+CONFIG_IDF_TARGET="esp32s3"
 
-# Memory Configuration - No PSRAM
+# ESP32-S3 specific settings
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_FREERTOS_HZ=1000
+
+# Memory Configuration - No PSRAM on M5 Atom S3
 # CONFIG_SPIRAM is not set
 
 # Heap allocation preferences (prefer internal RAM since no PSRAM)
