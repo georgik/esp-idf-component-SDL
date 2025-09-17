@@ -19,9 +19,9 @@
 #define CELL_MAX_SIZE 12
 #define RESET_AFTER_GENERATIONS 500
 
-// Screen dimensions will be determined at runtime from SDL display
-static int SCREEN_WIDTH = 320;  // Default fallback
-static int SCREEN_HEIGHT = 240; // Default fallback
+// Screen dimensions - defaults for M5Stack Tab5 portrait mode
+static int SCREEN_WIDTH = 720;   // M5Stack Tab5 portrait width  
+static int SCREEN_HEIGHT = 1280; // M5Stack Tab5 portrait height
 
 // Grid configuration - computed at runtime
 static int GRID_WIDTH = 64;
@@ -272,16 +272,25 @@ void* sdl_thread(void* args) {
     }
     printf("SDL initialized successfully\n");
 
-    // Query the actual display dimensions from SDL
+    // Get display dimensions from SDL after initialization
     const SDL_DisplayMode *display_mode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
     if (display_mode) {
         SCREEN_WIDTH = display_mode->w;
         SCREEN_HEIGHT = display_mode->h;
-        printf("Using actual display resolution: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        printf("SDL Display mode: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        
+        // For M5Stack Tab5, convert from landscape (1280x720) to portrait (720x1280)
+        // This gives better screen utilization even though orientation is flipped
+        if (SCREEN_WIDTH == 1280 && SCREEN_HEIGHT == 720) {
+            printf("Converting from landscape to portrait orientation for better screen usage\n");
+            int temp = SCREEN_WIDTH;
+            SCREEN_WIDTH = SCREEN_HEIGHT;
+            SCREEN_HEIGHT = temp;
+            printf("Using portrait dimensions: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        }
     } else {
         printf("Failed to get display mode, using defaults: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
     }
-
     // Initialize game grid based on screen resolution
     if (!init_game_grid(SCREEN_WIDTH, SCREEN_HEIGHT)) {
         printf("Failed to initialize game grid\n");
