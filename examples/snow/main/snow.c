@@ -56,7 +56,17 @@ void* sdl_thread(void* args) {
     if (display_mode) {
         SCREEN_WIDTH = display_mode->w;
         SCREEN_HEIGHT = display_mode->h;
-        printf("Using actual display resolution: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        printf("SDL Display mode: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        
+        // For M5Stack Tab5, convert from landscape (1280x720) to portrait (720x1280)
+        // This gives better screen utilization even though orientation is flipped
+        if (SCREEN_WIDTH == 1280 && SCREEN_HEIGHT == 720) {
+            printf("Converting from landscape to portrait orientation for better screen usage\n");
+            int temp = SCREEN_WIDTH;
+            SCREEN_WIDTH = SCREEN_HEIGHT;
+            SCREEN_HEIGHT = temp;
+            printf("Using portrait dimensions: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        }
     } else {
         printf("Failed to get display mode, using defaults: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
     }
