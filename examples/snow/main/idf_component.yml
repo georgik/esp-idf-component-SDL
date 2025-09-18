@@ -37,6 +37,13 @@ dependencies:
     version: "*"
     matches:
       - if: "$CONFIG{SDL_BSP_ESP32_P4_FUNCTION_EV} == True"
+  # Touch support for boards that need it
+  espressif/esp_lcd_touch:
+    version: "*"
+    matches:
+      - if: "$CONFIG{SDL_BSP_M5STACK_CORE_S3} == True"
+      - if: "$CONFIG{SDL_BSP_ESP32_S3_LCD_EV_BOARD} == True"
+      - if: "$CONFIG{SDL_BSP_ESP32_P4_FUNCTION_EV} == True"
   #espressif/esp32_c3_lcdkit_noglib:
   #  version: "*"
   #  matches:

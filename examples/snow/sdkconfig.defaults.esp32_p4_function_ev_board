@@ -3,6 +3,8 @@
 
 # Board selection
 CONFIG_SDL_BSP_ESP32_P4_FUNCTION_EV=y
+# Disable touch support to avoid complex initialization issues
+CONFIG_SDL_BSP_TOUCH_ENABLE=n
 
 CONFIG_IDF_TARGET="esp32p4"
 CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
@@ -26,3 +28,5 @@ CONFIG_ESP_MAIN_TASK_STACK_SIZE=32000
 # Panic behavior - halt and print stacktrace instead of rebooting
 CONFIG_ESP_SYSTEM_PANIC_PRINT_HALT=y
 
+# ESP32-P4-LCD-Ev-Kit resolution 1024x600
+CONFIG_BSP_LCD_TYPE_1024_600=y
