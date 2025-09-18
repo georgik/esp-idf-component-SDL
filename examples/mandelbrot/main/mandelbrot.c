@@ -35,6 +35,8 @@ typedef struct {
     int frame_count;
 } FractalState;
 
+// Single-threaded incremental rendering (SDL is not thread-safe)
+
 static FractalState fractal_state = {
     .center_x = FLOAT_TO_FIXED(-0.7),  // -0.7 in fixed point
     .center_y = FLOAT_TO_FIXED(0.0),   // 0.0 in fixed point
@@ -157,8 +159,14 @@ void render_mandelbrot_strip(SDL_Renderer *renderer, int start_y, int end_y, Fra
             SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
             SDL_RenderPoint(renderer, px, py);
         }
+        
+        // Yield to other tasks every few rows to prevent watchdog timeout
+        if ((py - start_y) % 4 == 3) {
+            taskYIELD();
+        }
     }
 }
+
 
 // Update fractal animation parameters using fixed point
 void update_fractal_animation(FractalState *state) {
@@ -256,7 +264,7 @@ void* sdl_thread(void* args) {
     }
 
     printf("Starting Mandelbrot fractal visualization...\n");
-    printf("Features: Adaptive resolution, color animation, auto-zoom\n");
+    printf("Features: Adaptive resolution, color animation, auto-zoom, incremental rendering\n");
 
     SDL_Event event;
     int running = 1;
@@ -264,6 +272,12 @@ void* sdl_thread(void* args) {
     printf("Max iterations: %d\n", MAX_ITERATIONS);
     printf("Fixed point shift: %d bits\n", FIXED_SHIFT);
     printf("FIXED_ONE = %d\n", FIXED_ONE);
+    
+    // Progressive rendering state (single-threaded, SDL is not thread-safe)
+    int current_strip = 0;
+    const int STRIP_HEIGHT = 10; // Small strips with frequent yielding
+    int total_strips = (SCREEN_HEIGHT + STRIP_HEIGHT - 1) / STRIP_HEIGHT;
+    printf("Single-threaded incremental rendering: %d strips of %d rows each\n", total_strips, STRIP_HEIGHT);
 
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -276,27 +290,42 @@ void* sdl_thread(void* args) {
         if (fractal_state.frame_count % 120 == 0) {
             update_fractal_animation(&fractal_state);
         }
-        fractal_state.frame_count++;
 
-        // Clear screen before rendering new frame
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-
-        // Render full frame (simplified for testing)
-        render_mandelbrot_strip(renderer, 0, SCREEN_HEIGHT, &fractal_state);
-
-        // Draw overlay and present
-        draw_info_overlay(renderer, &fractal_state);
-        SDL_RenderPresent(renderer);
-        
-        // Print progress periodically
-        if (fractal_state.frame_count % 60 == 0) {
-            printf("Frame %d, Zoom: %" PRId32 " (fixed), Location: (%" PRId32 ", %" PRId32 ") (fixed)\n", 
-                   fractal_state.frame_count, FIXED_TO_INT(fractal_state.zoom),
-                   FIXED_TO_INT(fractal_state.center_x), FIXED_TO_INT(fractal_state.center_y));
+        // Start new frame rendering
+        if (current_strip == 0) {
+            // Clear screen before rendering new frame
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
+            fractal_state.frame_count++;
         }
 
-        vTaskDelay(pdMS_TO_TICKS(16)); // ~60 FPS target (progressive rendering)
+        // Render one strip at a time (single-threaded, safe for SDL)
+        if (current_strip < total_strips) {
+            int start_y = current_strip * STRIP_HEIGHT;
+            int end_y = (current_strip + 1) * STRIP_HEIGHT;
+            if (end_y > SCREEN_HEIGHT) end_y = SCREEN_HEIGHT;
+            
+            render_mandelbrot_strip(renderer, start_y, end_y, &fractal_state);
+            current_strip++;
+        }
+        
+        // If we've finished all strips, present the frame and reset
+        if (current_strip >= total_strips) {
+            // Draw overlay and present
+            draw_info_overlay(renderer, &fractal_state);
+            SDL_RenderPresent(renderer);
+            current_strip = 0;
+            
+            // Print progress periodically
+            if (fractal_state.frame_count % 5 == 0) {
+                printf("Frame %d, Zoom: %" PRId32 " (fixed), Location: (%" PRId32 ", %" PRId32 ") (fixed)\n", 
+                       fractal_state.frame_count, FIXED_TO_INT(fractal_state.zoom),
+                       FIXED_TO_INT(fractal_state.center_x), FIXED_TO_INT(fractal_state.center_y));
+            }
+        }
+
+        // Yield between strips to prevent watchdog timeout
+        vTaskDelay(pdMS_TO_TICKS(2));
     }
 
     SDL_DestroyRenderer(renderer);

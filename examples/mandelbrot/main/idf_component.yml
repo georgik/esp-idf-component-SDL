@@ -2,15 +2,15 @@
 # Using SDL and SDL_bsp components from GitHub repositories
 
 dependencies:
-  # SDL3 component
+  # SDL3 component - using GitHub repository
   georgik/sdl:
-    git: https://github.com/georgik/esp-idf-component-SDL.git
-    path: "sdl"
     version: "feature/sdl_bsp"
-  # SDL BSP abstraction layer
+    git: "https://github.com/georgik/esp-idf-component-SDL.git"
+    path: "sdl"
+  # SDL BSP abstraction layer - using GitHub repository
   georgik/sdl_bsp:
-    git: https://github.com/georgik/esp-idf-component-SDL_bsp.git
     version: "*"
+    git: "https://github.com/georgik/esp-idf-component-SDL_bsp.git"
   # ESP-BSPs - conditional based on board selection to avoid symbol conflicts
 
   espressif/m5_atom_s3_noglib:
@@ -33,14 +33,27 @@ dependencies:
     version: "~4.0.0"
     matches:
       - if: "$CONFIG{SDL_BSP_ESP32_S3_LCD_EV_BOARD} == True"
+  espressif/esp32_p4_function_ev_board_noglib:
+    version: "*"
+    matches:
+      - if: "$CONFIG{SDL_BSP_ESP32_P4_FUNCTION_EV} == True"
+  # Touch support for boards that need it
+  espressif/esp_lcd_touch:
+    version: "*"
+    matches:
+      - if: "$CONFIG{SDL_BSP_M5STACK_CORE_S3} == True"
+      - if: "$CONFIG{SDL_BSP_ESP32_S3_LCD_EV_BOARD} == True"
+      - if: "$CONFIG{SDL_BSP_ESP32_P4_FUNCTION_EV} == True"
   #espressif/esp32_c3_lcdkit_noglib:
   #  version: "*"
   #  matches:
   #    - if: "$CONFIG{SDL_BSP_ESP32_C3_LCDKIT} == True"
 
-  # M5Stack Tab5 - experimental, using local path to forked ESP-BSP
-  m5stack_tab5_noglib:
-    path: "/Volumes/ssdt5/Users/georgik/projects/esp-bsp/bsp/m5stack_tab5"
+  # M5Stack Tab5 BSP - using GitHub repository
+  georgik/m5stack_tab5:
+    version: "feature/m5stack-tab5-sdl3"
+    git: "https://github.com/georgik/esp-bsp.git"
+    path: "bsp/m5stack_tab5"
     matches:
       - if: "$CONFIG{SDL_BSP_M5STACK_TAB5} == True"
 
