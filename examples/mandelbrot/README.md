@@ -38,29 +38,60 @@ Automatically visits famous Mandelbrot locations:
 
 ## 🚀 Quick Start
 
+### Board Selection Using SDKCONFIG_DEFAULTS Parameter
+
+```bash
+# M5 Atom S3 (128×128, No PSRAM) - Default
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
+
+# ESP32-S3-BOX-3 (320×240, OCTAL PSRAM)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" build flash monitor
+
+# M5Stack CoreS3 (320×240, QUAD PSRAM) 
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_core_s3" build flash monitor
+
+# M5Stack Tab5 (1280×720, 32MB PSRAM, ESP32-P4)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build flash monitor
+
+# ESP32-P4 RISC-V (up to 1280×800, 32MB PSRAM)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp32_p4_function_ev_board" build flash monitor
+
+# Universal: ANY ESP32 DevKit + configurable display
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" menuconfig  # Configure your hardware
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" build flash monitor
+
+# DevKit testing (virtual display, no physical display needed)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_devkit" build flash monitor
+```
+
+### First Time Setup (Default Board)
+
+```bash
+# Uses M5 Atom S3 by default
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
+```
+
 ### Using Component Registry
 ```bash
 idf.py create-project-from-example "georgik/sdl:mandelbrot"
 cd mandelbrot
-idf.py build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
 ```
 
-### Building for Specific Boards
-```bash
-# M5 Atom S3 (128×128, compact details)
-idf.py -DBOARD=m5_atom_s3 build flash monitor
+## 🎱️ Supported Boards
 
-# M5Stack CoreS3 (320×240, full beauty)  
-idf.py -DBOARD=m5stack_core_s3 build flash monitor
-
-# ESP32-P4 Function EV (1280×800, incredible detail)
-idf.py -DBOARD=esp32_p4_function_ev build flash monitor
-
-# Universal DevKit with custom display
-idf.py -DBOARD=esp_bsp_generic build
-idf.py menuconfig  # Configure your display
-idf.py build flash monitor
-```
+| Board | Architecture | Display | PSRAM | Key Features |
+|-------|-------------|---------|-------|--------------|
+| **`esp_bsp_generic`** | **Any ESP32** | **Configurable** | **Configurable** | **🔧 Universal DevKit + Display** |
+| `m5_atom_s3` | ESP32-S3 (Xtensa) | 128×128 GC9A01 | None | ✅ **Working** - Default board |
+| `m5stack_core_s3` | ESP32-S3 (Xtensa) | 320×240 ILI9341 | QUAD | Touch interface, large display |
+| `m5stack_tab5` | **ESP32-P4 (RISC-V)** | 1280×720 IPS via MIPI-DSI | 32MB | 5-inch display, GT911 touch |
+| `esp32_p4_function_ev` | **ESP32-P4 (RISC-V)** | up to 1280×800 | 32MB | PPA, H264, MIPI interfaces |
+| `esp32_s3_lcd_ev` | ESP32-S3 (Xtensa) | Multiple LCD types | 16MB OCTAL | Flexible interface support |
+| `esp32_s3_eye` | ESP32-S3 (Xtensa) | 240×240 circular | 8MB OCTAL | Camera + microphone |
+| `esp32_s3_korvo_2` | ESP32-S3 (Xtensa) | LCD + Camera | OCTAL | Audio focus, dual microphones |
+| `esp_bsp_devkit` | Any ESP32 | Virtual 240×320 | Configurable | LEDs/buttons, no display |
+| `esp_box_3` | ESP32-S3 (Xtensa) | 320×240 ILI9341 | OCTAL | ✅ **Working** |
 
 ## 📱 Display Adaptation Examples
 

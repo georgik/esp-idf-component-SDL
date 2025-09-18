@@ -1,0 +1,36 @@
+# M5Stack Tab5 ESP32-P4 Configuration
+# - 5-inch 1280x720 IPS display via MIPI-DSI
+# - GT911 touch controller
+# - 16MB Flash, 32MB PSRAM
+# - ESP32-P4 dual-core RISC-V
+
+# Board selection
+CONFIG_SDL_BSP_M5STACK_TAB5=y
+
+# BSP SDL Configuration
+CONFIG_BSP_CONFIG_NO_GRAPHIC_LIB=y
+
+CONFIG_IDF_TARGET="esp32p4"
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_FREERTOS_HZ=1000
+
+# PSRAM Configuration for ESP32-P4
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_HEX=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
+CONFIG_SPIRAM_RODATA=y
+
+# ESP32-P4 specific features
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+
+# Required for TTF rendering if it happens in main task
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=32000
+
+# Panic behavior - halt and print stacktrace instead of rebooting
+CONFIG_ESP_SYSTEM_PANIC_PRINT_HALT=y
+
+# BSP configuration for M5Stack Tab5
+# LVGL is disabled via BSP_CONFIG_NO_GRAPHIC_LIB in bsp/config.h (we're using SDL)
