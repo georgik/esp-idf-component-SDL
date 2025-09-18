@@ -39,24 +39,40 @@ Classic Conway's Game of Life rules with enhancements:
 ```bash
 idf.py create-project-from-example "georgik/sdl:conway"
 cd conway
-idf.py build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
 ```
 
-### Building for Specific Boards
+### Board Selection Using SDKCONFIG_DEFAULTS Parameter
+
 ```bash
-# M5 Atom S3 (128×128, compact grid)
-idf.py -DBOARD=m5_atom_s3 build flash monitor
+# M5 Atom S3 (128×128, No PSRAM) - Default
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
 
-# M5Stack CoreS3 (320×240, standard grid)
-idf.py -DBOARD=m5stack_core_s3 build flash monitor
+# ESP32-S3-BOX-3 (320×240, OCTAL PSRAM)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" build flash monitor
 
-# ESP32-P4 Function EV (large high-resolution display)
-idf.py -DBOARD=esp32_p4_function_ev build flash monitor
+# M5Stack CoreS3 (320×240, QUAD PSRAM) 
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_core_s3" build flash monitor
 
-# Universal DevKit with custom display
-idf.py -DBOARD=esp_bsp_generic build
-idf.py menuconfig  # Configure your display
-idf.py build flash monitor
+# M5Stack Tab5 (1280×720, 32MB PSRAM, ESP32-P4)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build flash monitor
+
+# ESP32-P4 RISC-V (up to 1280×800, 32MB PSRAM)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp32_p4_function_ev_board" build flash monitor
+
+# Universal: ANY ESP32 DevKit + configurable display
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" menuconfig  # Configure your hardware
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" build flash monitor
+
+# DevKit testing (virtual display, no physical display needed)
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_devkit" build flash monitor
+```
+
+### First Time Setup (Default Board)
+
+```bash
+# Uses M5 Atom S3 by default
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
 ```
 
 ## 📱 Display Adaptation Examples
