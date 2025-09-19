@@ -14,9 +14,13 @@ This is a comprehensive component wrapper for upstream SDL 3.3.0 designed for ES
 ### Installation
 ```bash
 # Add SDL component from registry
-idf.py add-dependency "georgik/sdl=3.3.0~2"
+idf.py add-dependency "georgik/sdl"
 
-# Add board abstraction layer (GitHub only due to registry limitations)
+# Add board abstraction layer (GitHub only due to Component Registry limitations)
+cd components
+git clone --depth 1 https://github.com/georgik/esp-idf-component-SDL_bsp.git georgik__sdl_bsp
+
+# Or add as git submodule
 cd components
 git submodule add https://github.com/georgik/esp-idf-component-SDL_bsp.git georgik__sdl_bsp
 ```
@@ -144,7 +148,6 @@ git submodule add https://github.com/georgik/esp-idf-component-SDL_bsp.git georg
           │
 ┌─────────▼───────┐
 │ georgik/sdl     │ ← This component (board-agnostic)
-│ (3.3.0~2)       │
 └─────────┬───────┘
           │  
 ┌─────────▼───────┐

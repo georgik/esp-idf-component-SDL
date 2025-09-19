@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Component Version (e.g., 3.3.0~3)'
-        required: true
-        default: '3.3.0~3'
+        description: 'Component Version (leave empty to use version from idf_component.yml)'
+        required: false
         type: string
   push:
     tags:
@@ -23,22 +22,39 @@ jobs:
         with:
           submodules: 'recursive'
           
-      - name: Set version from tag if available
+      - name: Set version from various sources
         id: set_version
         run: |
+          # Read version from idf_component.yml as the primary source
+          YML_VERSION=$(grep '^version:' sdl/idf_component.yml | awk '{print $2}')
+
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # Use git tag version if available
             VERSION=${GITHUB_REF#refs/tags/v}
+            echo "Using version from git tag: $VERSION"
             echo "version=$VERSION" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT  
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.version }}" ]]; then
+            # Use manual input version if provided
+            VERSION="${{ github.event.inputs.version }}"
+            echo "Using version from manual input: $VERSION"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
           else
-            # Default version for direct pushes
-            echo "version=3.3.0~3" >> $GITHUB_OUTPUT
+            # Use version from idf_component.yml as default
+            echo "Using version from idf_component.yml: $YML_VERSION"
+            echo "version=$YML_VERSION" >> $GITHUB_OUTPUT
           fi
-          
-      - name: Update component version in yml
+
+      - name: Update component version in yml if needed
         run: |
-          sed -i "s/^version:.*/version: ${{ steps.set_version.outputs.version }}/" sdl/idf_component.yml
+          CURRENT_VERSION=$(grep '^version:' sdl/idf_component.yml | awk '{print $2}')
+          TARGET_VERSION="${{ steps.set_version.outputs.version }}"
+          
+          if [[ "$CURRENT_VERSION" != "$TARGET_VERSION" ]]; then
+            echo "Updating version from $CURRENT_VERSION to $TARGET_VERSION"
+            sed -i "s/^version:.*/version: $TARGET_VERSION/" sdl/idf_component.yml
+          else
+            echo "Version already matches: $TARGET_VERSION"
+          fi
           
       - name: Display component info
         run: |

@@ -1,8 +1,14 @@
+license: Zlib
+repository: https://github.com/georgik/esp-idf-component-SDL
+url: https://www.libsdl.org/
+version: 3.3.0~4
+
+description: Simple DirectMedia Layer (SDL) Version 3.3 (ESP-IDF wrapper on upstream SDL)
+
 dependencies:
   idf:
     version: '>=5.5.0'
-description: Simple DirectMedia Layer (SDL) Version 3.3 (ESP-IDF wrapper on upstream
-  SDL)
+
 files:
   exclude:
   - .github
@@ -65,10 +71,6 @@ files:
   - SDL/include/build_config/*.h
   - include/build_config/*.h
   - SDL/src/core/linux/SDL_dbus.h
-license: Zlib
-repository: https://github.com/georgik/esp-idf-component-SDL
-url: https://www.libsdl.org/
-version: 3.3.0~3
 
 examples:
   - path: ../examples/snow
