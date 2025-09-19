@@ -68,7 +68,7 @@ files:
 license: Zlib
 repository: https://github.com/georgik/esp-idf-component-SDL
 url: https://www.libsdl.org/
-version: 3.3.0~2
+version: 3.3.0~3
 
 examples:
   - path: ../examples/snow
