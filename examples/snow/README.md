@@ -1,14 +1,40 @@
-# ESP-BSP SDL Universal Board Selection System
+# ❄️ Snow Simulation - SDL3 Example
 
-**🌟 The world's most comprehensive embedded SDL board abstraction system 🌟**
+**Simple particle simulation** with falling white pixels that resemble snow.
 
-A revolutionary SDL3-based framework that provides **true hardware universality** - write once, run on any ESP32-based development board with automatic display resolution adaptation.
+🎯 **Cross-Platform** - The same SDL3 code runs on different ESP32 boards with various display sizes.
 
-🎯 **One Application, Any Hardware** - The same SDL3 code seamlessly runs on displays from 128×128 to 1280×800 across both Xtensa and RISC-V architectures.
+## 🎮 What This Demonstrates
 
-## ⭐ Featured Demo: Snow Simulation
+- **❄️ Basic Particle System** - Moving white pixels falling down the screen
+- **📱 Resolution Adaptation** - Automatically scales to different display sizes  
+- **⚡ Simple Animation** - Basic SDL rendering loop for embedded systems
+- **🎛️ Board Abstraction** - Shows how SDL works across different ESP32 boards
 
-Watch beautiful falling snow particles automatically adapt to your display resolution - from the compact M5 Atom S3 (128×128) to massive ESP32-P4 displays (up to 1280×800).
+## 🚀 Quick Start
+
+### Create Project from Example
+```bash
+# Create snow project from component registry
+idf.py create-project-from-example "georgik/sdl:snow"
+
+# Configure board and build
+idf.py menuconfig  # Select your board in "ESP-BSP SDL Configuration"
+idf.py build flash monitor
+```
+
+### Alternative: Using ESPBrew
+```bash
+# Multi-board build manager with TUI
+espbrew .  # Interactive mode - select boards and press 'b'
+espbrew --cli-only .  # Automatic mode - builds all detected boards
+```
+
+**ESPBrew** automatically detects all board configurations and can build/flash multiple boards:
+- **Auto-Discovery** - Finds `sdkconfig.defaults.*` files automatically  
+- **TUI Interface** - Interactive selection and real-time build monitoring
+- **Parallel Builds** - Build multiple boards simultaneously
+- **Project**: https://github.com/georgik/espbrew
 
 ![Architecture Overview](docs/architecture.png)
 

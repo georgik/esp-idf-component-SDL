@@ -1,27 +1,40 @@
-# ESP-BSP SDL Universal Board Selection System
+# 🫧 Bubble Physics - SDL3 Example
 
-**🌟 The world's most comprehensive embedded SDL board abstraction system 🌟**
+**Simple physics simulation** with bouncing bubbles and basic collision detection.
 
-A revolutionary SDL3-based framework that provides **true hardware universality** - write once, run on any ESP32-based development board with automatic display resolution adaptation.
+🎯 **Cross-Platform** - The same SDL3 code runs on different ESP32 boards with various display sizes.
 
-🎯 **One Application, Any Hardware** - The same SDL3 code seamlessly runs on displays from 128×128 to 1280×800 across both Xtensa and RISC-V architectures.
+## 🎮 What This Demonstrates
 
-## ⭐ Featured Demo: Bubble Monitor Simulation
-
-Watch beautiful system load visualization through animated bubbles that automatically adapt to your display resolution - from the compact M5 Atom S3 (128×128) to massive ESP32-P4 displays (up to 1280×800).
-
-Inspired by the classic wmbubble system monitor, this SDL3 implementation provides:
-- **Water Physics**: Realistic water surface simulation with wave dynamics
-- **Bubble Generation**: CPU load visualization through bubble frequency
-- **Memory Usage**: Water level represents memory consumption
-- **I/O Activity**: Animated seaweed shows disk/network activity
-- **Floating Duck**: Cute rubber duck for visual appeal
+- **🫧 Basic Physics** - Bouncing circles with gravity and collision detection
+- **📱 Resolution Adaptation** - Automatically scales to different display sizes
+- **🎨 Simple Graphics** - Basic SDL rendering with filled circles
+- **🗺️ Touch Support** - Interactive bubble creation on touch-enabled boards
+- **🎛️ Board Abstraction** - Shows how SDL works across different ESP32 boards
 
 ![Architecture Overview](docs/architecture.png)
 
 ## 🚀 Quick Start
 
-### Board Selection Using SDKCONFIG_DEFAULTS Parameter
+### Create Project from Example
+```bash
+# Create Bubble project from component registry
+idf.py create-project-from-example "georgik/sdl:bubble"
+cd bubble
+
+# Configure board and build
+idf.py menuconfig  # Select your board in "ESP-BSP SDL Configuration"
+idf.py build flash monitor
+```
+
+### Alternative: Using ESPBrew
+```bash
+# Multi-board build manager with TUI
+espbrew .  # Interactive mode - select boards and press 'b'
+espbrew --cli-only .  # Automatic mode - builds all detected boards
+```
+
+### Legacy Board Selection (if not using new ESP-BSP-SDL)
 
 ```bash
 # M5 Atom S3 (128×128, No PSRAM) - Default

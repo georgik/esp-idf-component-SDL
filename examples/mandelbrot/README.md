@@ -1,14 +1,14 @@
-# Mandelbrot Fractal Visualization - SDL3 ESP-IDF Example
+# Mandelbrot Fractal - SDL3 Example
 
-**🌈 Beautiful Mandelbrot set visualization with dynamic colors and animation**
+**🌀 Mandelbrot set visualization** with basic color cycling and zoom animation.
 
-A stunning real-time implementation of the Mandelbrot fractal using SDL3 on ESP32 microcontrollers, featuring:
+Real-time fractal rendering that adapts to different ESP32 display sizes:
 
-- **Universal Board Support** - Automatically adapts to any display resolution
-- **4 Color Schemes** - Fire, Ocean, Sunset, and Psychedelic gradients
-- **Progressive Rendering** - Smooth animation even on slower hardware
-- **Auto-Zoom Journey** - Explores 7 mathematically interesting locations
-- **HSV Color Space** - Rich, smooth color transitions
+- **Resolution Adaptation** - Scales to different display sizes  
+- **Color Cycling** - Simple color schemes that change over time
+- **Progressive Rendering** - Renders in strips to maintain responsiveness
+- **Auto-Zoom** - Visits different areas of the fractal automatically
+- **Fixed-Point Math** - Optimized for embedded systems
 
 ![Mandelbrot Fractal on ESP32](preview.gif)
 
@@ -38,7 +38,25 @@ Automatically visits famous Mandelbrot locations:
 
 ## 🚀 Quick Start
 
-### Board Selection Using SDKCONFIG_DEFAULTS Parameter
+### Create Project from Example
+```bash
+# Create Mandelbrot project from component registry
+idf.py create-project-from-example "georgik/sdl:mandelbrot"
+cd mandelbrot
+
+# Configure board and build
+idf.py menuconfig  # Select your board in "ESP-BSP SDL Configuration"
+idf.py build flash monitor
+```
+
+### Alternative: Using ESPBrew
+```bash
+# Multi-board build manager with TUI
+espbrew .  # Interactive mode - select boards and press 'b'
+espbrew --cli-only .  # Automatic mode - builds all detected boards
+```
+
+### Legacy Board Selection (if not using new ESP-BSP-SDL)
 
 ```bash
 # M5 Atom S3 (128×128, No PSRAM) - Default

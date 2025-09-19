@@ -4,9 +4,10 @@
 dependencies:
   # SDL3 component - using GitHub repository
   georgik/sdl:
-    version: "feature/sdl_bsp"
-    git: "https://github.com/georgik/esp-idf-component-SDL.git"
-    path: "sdl"
+    version: "3.3.0~2"
+    #version: "feature/sdl_bsp"
+    #git: "https://github.com/georgik/esp-idf-component-SDL.git"
+    #path: "sdl"
   # SDL BSP abstraction layer - using GitHub repository
   georgik/sdl_bsp:
     version: "*"

@@ -1,5 +1,4 @@
 dependencies:
-  espressif/esp_lcd_touch_tt21100: '*'
   idf:
     version: '>=5.5.0'
 description: Simple DirectMedia Layer (SDL) Version 3.3 (ESP-IDF wrapper on upstream
@@ -67,6 +66,6 @@ files:
   - include/build_config/*.h
   - SDL/src/core/linux/SDL_dbus.h
 license: Zlib
-repository: https://github.com/georgik/SDL/tree/feature/esp-idf
+repository: https://github.com/georgik/esp-idf-component-SDL
 url: https://www.libsdl.org/
-version: 3.3.0~1
+version: 3.3.0~2

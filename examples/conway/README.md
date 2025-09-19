@@ -1,14 +1,13 @@
-# Conway's Game of Life - SDL3 ESP-IDF Example
+# Conway's Game of Life - SDL3 Example
 
-**🎮 Conway's Game of Life with age-based color visualization**
+**🧬 Classic cellular automaton** with basic age-based coloring.
 
-A beautiful implementation of Conway's Game of Life cellular automaton using SDL3 on ESP32 microcontrollers, featuring:
+Standard Conway's Game of Life implementation that adapts to different ESP32 display sizes:
 
-- **Universal Board Support** - Automatically adapts to any display resolution
-- **Age-Based Coloring** - Living cells change color as they age (blue → cyan → white)
-- **Intelligent Grid Scaling** - Optimal cell size calculation for each display
-- **Classic Patterns** - Includes the famous glider pattern
-- **Auto-Reset** - Generates new random patterns every 500 generations
+- **Grid Scaling** - Calculates appropriate cell size for each display
+- **Age Coloring** - Living cells get brighter as they survive longer
+- **Pattern Reset** - Starts with new random patterns periodically
+- **Cross-Platform** - Same code works on various ESP32 boards
 
 ![Conway's Game of Life on ESP32](preview.gif)
 
@@ -35,11 +34,15 @@ Classic Conway's Game of Life rules with enhancements:
 
 ## 🚀 Quick Start
 
-### Using Component Registry
+### Create Project from Example
 ```bash
+# Create Conway project from component registry
 idf.py create-project-from-example "georgik/sdl:conway"
 cd conway
-idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" build flash monitor
+
+# Configure board and build
+idf.py menuconfig  # Select your board in "ESP-BSP SDL Configuration"
+idf.py build flash monitor
 ```
 
 ### Board Selection Using SDKCONFIG_DEFAULTS Parameter
