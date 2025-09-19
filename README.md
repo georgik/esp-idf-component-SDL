@@ -48,7 +48,7 @@ idf.py build flash monitor
 ```
 
 ### Alternative: ESPBrew Multi-Board Manager
-**🍺 ESPBrew** - TUI tool for managing builds across multiple boards:
+**🍺 ESPBrew** - Advanced TUI tool for managing builds across multiple boards with SDL examples:
 
 ```bash
 # Install ESPBrew
@@ -61,14 +61,17 @@ espbrew .  # Interactive TUI - select boards and press 'b' to build
 espbrew --cli-only .  # CLI mode - builds all boards automatically
 ```
 
+**Perfect for SDL Examples**: ESPBrew automatically discovers all board configurations and lets you build SDL examples for multiple boards simultaneously. All built-in SDL examples (`snow`, `conway`, `mandelbrot`, `bubble`) work seamlessly with ESPBrew.
+
 **Features:**
 - 🎯 **Auto-Discovery** - Finds all board configurations automatically
 - 🖥️ **TUI Interface** - Interactive interface with real-time build monitoring  
 - 📊 **Parallel Builds** - Build multiple boards simultaneously
 - 📝 **Script Generation** - Creates `build_{board}.sh` and `flash_{board}.sh` scripts
 - 📁 **Organized Output** - Separate build directories and logs for each board
+- 🎮 **SDL-Optimized** - Perfect workflow for testing SDL examples across devices
 
-**Project**: https://github.com/georgik/espbrew
+**Learn More**: https://github.com/georgik/espbrew
 
 ## 🎯 Featured Examples
 

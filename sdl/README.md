@@ -6,15 +6,22 @@
 
 ### Installation via Component Registry
 ```bash
-idf.py add-dependency "georgik/sdl=3.3.0~2"
+idf.py add-dependency "georgik/sdl"
 ```
 
 ### Required: ESP-BSP-SDL Abstraction Layer
 **⚠️ Important**: This SDL component requires the ESP-BSP-SDL abstraction layer for board support:
 
 ```bash
-# GitHub installation required (registry limitations)
-cd components  
+# Add SDL component from registry
+idf.py add-dependency "georgik/sdl"
+
+# Add board abstraction layer (GitHub only due to Component Registry limitations)
+cd components
+git clone --depth 1 https://github.com/georgik/esp-idf-component-SDL_bsp.git georgik__sdl_bsp
+
+# Or add as git submodule
+cd components
 git submodule add https://github.com/georgik/esp-idf-component-SDL_bsp.git georgik__sdl_bsp
 ```
 
@@ -120,6 +127,25 @@ ESP-BSP Components        ← Board-specific drivers
 - **⚡ Automatic Hardware Detection** - No manual configuration
 - **🔧 Clean Dependencies** - No BSP symbol conflicts
 - **📱 Touch Ready** - Optional touch interface support
+
+## 🍺 ESPBrew Multi-Board Development
+
+**ESPBrew** - Advanced TUI tool for building SDL projects across multiple boards:
+
+```bash
+# Install ESPBrew
+git clone https://github.com/georgik/espbrew && cd espbrew
+cargo build --release
+
+# Use in any SDL project
+cd your-sdl-project
+espbrew .  # Interactive TUI - select boards and build
+espbrew --cli-only .  # Automated builds for all boards
+```
+
+**Perfect for SDL Examples**: Build all SDL examples (`snow`, `conway`, `mandelbrot`, `bubble`) across multiple boards simultaneously. ESPBrew automatically discovers board configurations and manages parallel builds.
+
+**Learn More**: https://github.com/georgik/espbrew
 
 ## 🔧 Migration from Old Approach
 
