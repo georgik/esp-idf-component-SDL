@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Component Version (e.g., 3.3.0~2)'
+        description: 'Component Version (e.g., 3.3.0~3)'
         required: true
-        default: '3.3.0~2'
+        default: '3.3.0~3'
         type: string
   push:
     tags:
@@ -33,7 +33,7 @@ jobs:
             echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT  
           else
             # Default version for direct pushes
-            echo "version=3.3.0~2" >> $GITHUB_OUTPUT
+            echo "version=3.3.0~3" >> $GITHUB_OUTPUT
           fi
           
       - name: Update component version in yml
