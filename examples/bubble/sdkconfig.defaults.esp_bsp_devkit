@@ -1,0 +1,50 @@
+# ESP BSP DevKit Configuration Defaults
+# Basic BSP for ESP32 DevKits with LEDs and buttons only (no display)
+
+# Board selection
+CONFIG_ESP_BSP_SDL_BOARD_ESP_BSP_DEVKIT=y
+CONFIG_ESP_BSP_SDL_BOARD_NAME="ESP BSP DevKit (LEDs/Buttons)"
+
+# Target configuration - can be used with any ESP32 variant
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=16000
+
+# Memory Configuration - Minimal, no display buffers needed
+# CONFIG_SPIRAM is not set (many DevKits don't have PSRAM)
+
+# Heap allocation preferences (internal RAM only)
+CONFIG_HEAP_ALLOCATION_POLICY_DEFAULT=0
+
+# Performance optimizations for limited resources
+CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP=3
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0=n
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1=n
+
+# No display buffers needed for DevKit BSP
+CONFIG_LCD_DRAW_BUFF_SIZE=0
+
+# ESP BSP DevKit specific settings
+CONFIG_BSP_DEVKIT_ENABLED=y
+
+# Button configuration (up to 5 buttons supported)
+CONFIG_BSP_DEVKIT_BUTTON_ENABLED=y
+CONFIG_BSP_DEVKIT_BUTTON_COUNT=2
+
+# LED configuration (GPIO and RGB LEDs)
+CONFIG_BSP_DEVKIT_LED_ENABLED=y
+CONFIG_BSP_DEVKIT_LED_GPIO_COUNT=1
+CONFIG_BSP_DEVKIT_LED_RGB_ENABLED=y
+CONFIG_BSP_DEVKIT_LED_ADDRESSABLE_ENABLED=y
+
+# File system support
+CONFIG_BSP_DEVKIT_SPIFFS_ENABLED=y
+CONFIG_BSP_DEVKIT_USD_ENABLED=y
+
+# No LVGL support for basic DevKit BSP
+# CONFIG_BSP_DEVKIT_LVGL_ENABLED is not set
+
+# No display/touch support for DevKit BSP
+# CONFIG_BSP_DEVKIT_DISPLAY_ENABLED is not set
+# CONFIG_BSP_DEVKIT_TOUCH_ENABLED is not set

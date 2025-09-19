@@ -1,0 +1,26 @@
+# M5 Atom S3 Board Configuration Defaults
+# No PSRAM available on M5 Atom S3
+
+# Board selection
+CONFIG_SDL_BSP_M5_ATOM_S3=y
+CONFIG_IDF_TARGET="esp32s3"
+
+# ESP32-S3 specific settings
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_FREERTOS_HZ=1000
+
+# Memory Configuration - No PSRAM on M5 Atom S3
+# CONFIG_SPIRAM is not set
+
+# Heap allocation preferences (prefer internal RAM since no PSRAM)
+CONFIG_HEAP_ALLOCATION_POLICY_DEFAULT=0
+
+# Performance optimizations for limited RAM
+CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP=3
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0=n
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1=n
+
+# Display-specific optimizations
+CONFIG_LCD_DRAW_BUFF_SIZE=2048

@@ -26,6 +26,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <errno.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #include "timer/SDL_timer_c.h"
 
@@ -169,6 +171,7 @@ void SDL_SYS_DelayNS(Uint64 ns)
         tv.tv_nsec = remaining.tv_nsec;
         was_error = nanosleep(&tv, &remaining);
 #else
+        // Use ESP-IDF FreeRTOS delay instead of select()
         // Calculate the time interval left (in case of interrupt)
         now = SDL_GetTicksNS();
         elapsed = (now - then);
@@ -177,10 +180,12 @@ void SDL_SYS_DelayNS(Uint64 ns)
             break;
         }
         ns -= elapsed;
-        tv.tv_sec = (ns / SDL_NS_PER_SECOND);
-        tv.tv_usec = SDL_NS_TO_US(ns % SDL_NS_PER_SECOND);
 
-        was_error = select(0, NULL, NULL, NULL, &tv);
+        // Convert nanoseconds to milliseconds and use vTaskDelay
+        TickType_t delay_ticks = pdMS_TO_TICKS((ns + SDL_NS_PER_MS - 1) / SDL_NS_PER_MS);
+        if (delay_ticks == 0) delay_ticks = 1;  // Minimum delay of 1 tick
+        vTaskDelay(delay_ticks);
+        was_error = 0;  // FreeRTOS delay doesn't return error
 #endif // HAVE_NANOSLEEP
     } while (was_error && (errno == EINTR));
 }

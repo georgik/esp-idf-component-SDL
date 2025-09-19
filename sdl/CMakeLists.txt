@@ -155,7 +155,7 @@ idf_component_register(SRCS
                         "SDL/src/video"
                         "SDL/include/SDL3"
                     REQUIRES
-                        $ENV{BUILD_BOARD}
+                        georgik__sdl_bsp
                     PRIV_REQUIRES
                         ${extra_reqs}
 )

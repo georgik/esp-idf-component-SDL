@@ -1,22 +1,26 @@
-# ❄️ Snow Simulation - SDL3 Example
+# 🫧 Bubble Physics - SDL3 Example
 
-**Simple particle simulation** with falling white pixels that resemble snow.
+**Simple physics simulation** with bouncing bubbles and basic collision detection.
 
 🎯 **Cross-Platform** - The same SDL3 code runs on different ESP32 boards with various display sizes.
 
 ## 🎮 What This Demonstrates
 
-- **❄️ Basic Particle System** - Moving white pixels falling down the screen
-- **📱 Resolution Adaptation** - Automatically scales to different display sizes  
-- **⚡ Simple Animation** - Basic SDL rendering loop for embedded systems
+- **🫧 Basic Physics** - Bouncing circles with gravity and collision detection
+- **📱 Resolution Adaptation** - Automatically scales to different display sizes
+- **🎨 Simple Graphics** - Basic SDL rendering with filled circles
+- **🗺️ Touch Support** - Interactive bubble creation on touch-enabled boards
 - **🎛️ Board Abstraction** - Shows how SDL works across different ESP32 boards
+
+![Architecture Overview](docs/architecture.png)
 
 ## 🚀 Quick Start
 
 ### Create Project from Example
 ```bash
-# Create snow project from component registry
-idf.py create-project-from-example "georgik/sdl:snow"
+# Create Bubble project from component registry
+idf.py create-project-from-example "georgik/sdl:bubble"
+cd bubble
 
 # Configure board and build
 idf.py menuconfig  # Select your board in "ESP-BSP SDL Configuration"
@@ -30,17 +34,7 @@ espbrew .  # Interactive mode - select boards and press 'b'
 espbrew --cli-only .  # Automatic mode - builds all detected boards
 ```
 
-**ESPBrew** automatically detects all board configurations and can build/flash multiple boards:
-- **Auto-Discovery** - Finds `sdkconfig.defaults.*` files automatically  
-- **TUI Interface** - Interactive selection and real-time build monitoring
-- **Parallel Builds** - Build multiple boards simultaneously
-- **Project**: https://github.com/georgik/espbrew
-
-![Architecture Overview](docs/architecture.png)
-
-## 🚀 Quick Start
-
-### Board Selection Using SDKCONFIG_DEFAULTS Parameter
+### Legacy Board Selection (if not using new ESP-BSP-SDL)
 
 ```bash
 # M5 Atom S3 (128×128, No PSRAM) - Default
@@ -128,6 +122,31 @@ idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp_bsp_generic" build flash mo
 - **Xtensa (ESP32-S3)**: All ESP32-S3 based development boards
 - **RISC-V (ESP32-P4)**: Next-gen ESP32-P4 with advanced multimedia features
 - **Universal**: ESP BSP Generic works with any ESP32 variant
+
+## 💧 Bubble Monitor Features
+
+### System Load Visualization
+- **CPU Load**: Controls bubble generation frequency and layering
+- **Memory Usage**: Animated water level shows RAM consumption
+- **I/O Activity**: Green seaweed animation indicates disk/network activity
+- **Real-time Physics**: Water waves respond to memory changes
+
+### Adaptive Display Scaling
+```c
+// Automatically adapts to any display resolution
+const SDL_DisplayMode *display_mode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
+if (display_mode) {
+    SCREEN_WIDTH = display_mode->w;   // 128, 240, 320, 800+, 1024+
+    SCREEN_HEIGHT = display_mode->h;  // 128, 240, 320, 600+, 720+
+    printf("Bubble monitor running on %dx%d display\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+```
+
+### Memory Management
+- **Heap Allocation**: Large data structures use heap memory for stability
+- **PSRAM Utilization**: Automatic PSRAM usage on supported boards
+- **Stack Protection**: Enabled stack overflow detection
+- **Watchdog Prevention**: Proper task yielding to prevent timeouts
 
 ## 🚀 Advanced Usage
 
@@ -227,6 +246,12 @@ idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.<new_board>" build
 ### Memory Issues
 - **M5 Atom S3**: Uses internal RAM optimization (no PSRAM)
 - **All others**: Configured for PSRAM with appropriate heap allocation policies
+- **Stack Protection**: Enabled compiler stack checking and FreeRTOS stack overflow detection
+
+### Performance Issues
+- **Watchdog Timeouts**: Proper task yielding prevents watchdog triggers
+- **High CPU Usage**: Bubble generation rate adapts to system load
+- **Memory Monitoring**: Real-time heap usage tracking
 
 ### Display Problems
 1. **Check board selection** matches your hardware
@@ -260,7 +285,7 @@ idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build
 ## 📊 Project Structure
 
 ```
-snow/
+bubble/
 ├── components/
 │   ├── esp_bsp_sdl/                    # 🎯 Universal board abstraction
 │   │   ├── include/esp_bsp_sdl.h       # Board-agnostic API
@@ -271,7 +296,7 @@ snow/
 │   │   └── CMakeLists.txt               # Conditional board compilation
 │   └── georgik__sdl/                   # Board-agnostic SDL3 component
 ├── sdkconfig.defaults.<board>/         # Board-specific configurations
-├── main/                              # Universal SDL3 application
+├── main/                              # Universal SDL3 bubble monitor
 ├── BOARDS.md                          # Complete board guide
 ├── ESP_BSP_GENERIC_GUIDE.md           # Universal DevKit guide  
 └── README.md                          # This file
@@ -281,11 +306,11 @@ snow/
 
 ```bash
 # Create from template
-idf.py create-project-from-example "georgik/sdl:snow"
+idf.py create-project-from-example "georgik/sdl:bubble"
 
 # Or clone and customize
 git clone <repository>
-cd snow
+cd bubble
 idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.<your_board>" build flash monitor
 ```
 
@@ -313,15 +338,15 @@ idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" build flash monitor
 - **Setup**: No additional environment variables needed
 - **Status**: ✅ **Fully Working** - BSP symbol conflicts resolved
 
-### 🖥️ **M5Stack Tab5**
+### 🖥️ **ESP32-P4 Function EV Board**
 ```bash
-idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" build flash monitor
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp32_p4_function_ev_board" build flash monitor
 ```
-- **Display**: 1280×720 IPS display via MIPI-DSI
+- **Display**: 1024×600 IPS display via MIPI-DSI
 - **PSRAM**: 32MB HEX PSRAM
 - **Processor**: ESP32-P4 dual-core RISC-V
-- **Touch**: GT911 touch controller
-- **Status**: ✅ **Fully Working** - Complete 5-inch tablet experience
+- **Features**: Advanced multimedia capabilities, PPA acceleration
+- **Status**: ✅ **Fully Working** - Complete embedded system monitor experience
 
 ### 🔄 **Seamless Board Switching**
 
@@ -333,7 +358,6 @@ idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5_atom_s3" fullclean build fla
 # Switch to ESP32-S3-BOX-3  
 idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp-box-3" fullclean build flash monitor
 
-# Switch to M5Stack Tab5
-idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.m5stack_tab5" fullclean build flash monitor
+# Switch to ESP32-P4 Function EV Board
+idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults.esp32_p4_function_ev_board" fullclean build flash monitor
 ```
-

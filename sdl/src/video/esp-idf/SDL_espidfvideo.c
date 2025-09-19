@@ -6,11 +6,6 @@
 #include "SDL_espidfevents.h"
 #include "SDL_espidftouch.h"
 
-#include "bsp/esp-bsp.h"
-#include "bsp/display.h"
-#if BSP_CAPS_TOUCH == 1
-#include "bsp/touch.h"
-#endif
 #include "esp_log.h"
 
 #ifdef SDL_VIDEO_DRIVER_PRIVATE
@@ -23,6 +18,7 @@
 
 esp_lcd_panel_handle_t panel_handle = NULL;
 esp_lcd_panel_io_handle_t panel_io_handle = NULL;
+esp_bsp_sdl_display_config_t display_config;
 
 static bool ESPIDF_VideoInit(SDL_VideoDevice *_this);
 static void ESPIDF_VideoQuit(SDL_VideoDevice *_this);
@@ -64,38 +60,32 @@ static bool ESPIDF_VideoInit(SDL_VideoDevice *_this)
 {
     SDL_DisplayMode mode;
     SDL_zero(mode);
-    mode.format = SDL_PIXELFORMAT_RGB565;
-    mode.w = BSP_LCD_H_RES;
-    mode.h = BSP_LCD_V_RES;
-    printf("ESP-IDF video init\n");
+    
+    // Initialize the ESP-BSP SDL abstraction layer
+    esp_err_t ret = esp_bsp_sdl_init(&display_config, &panel_handle, &panel_io_handle);
+    if (ret != ESP_OK) {
+        printf("Failed to initialize ESP-BSP SDL abstraction: %s\n", esp_err_to_name(ret));
+        return false;
+    }
+    
+    printf("ESP-IDF video init for board: %s\n", esp_bsp_sdl_get_board_name());
+    printf("Display resolution: %dx%d\n", display_config.width, display_config.height);
+    
+    mode.format = display_config.pixel_format;
+    mode.w = display_config.width;
+    mode.h = display_config.height;
+    
     if (SDL_AddBasicVideoDisplay(&mode) == 0) {
         return false;
     }
 
-#ifdef CONFIG_IDF_TARGET_ESP32P4
-    const bsp_display_config_t bsp_disp_cfg = {
-        .dsi_bus = {
-            .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
-            .lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS,
-        }
-    };
-#else
-    const bsp_display_config_t bsp_disp_cfg = {
-        .max_transfer_sz = (BSP_LCD_H_RES * BSP_LCD_V_RES) * sizeof(uint16_t),
-    };
-#endif
+    ESP_ERROR_CHECK(esp_bsp_sdl_backlight_on());
+    ESP_ERROR_CHECK(esp_bsp_sdl_display_on_off(true));
 
-    ESP_ERROR_CHECK(bsp_display_new(&bsp_disp_cfg, &panel_handle, &panel_io_handle));
-
-    ESP_ERROR_CHECK(bsp_display_backlight_on());
-
-#ifndef CONFIG_IDF_TARGET_ESP32P4
-    esp_lcd_panel_disp_on_off(panel_handle, true);
-#endif
-
-#if BSP_CAPS_TOUCH == 1
-    ESPIDF_InitTouch();
-#endif
+    if (display_config.has_touch) {
+        ESPIDF_InitTouch();
+    }
+    
     return true;
 }
 

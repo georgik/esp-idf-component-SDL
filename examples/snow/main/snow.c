@@ -6,8 +6,9 @@
 #include "freertos/task.h"
 
 #define MAX_SNOWFLAKES 100
-#define SCREEN_WIDTH  320
-#define SCREEN_HEIGHT 240
+// Screen dimensions will be determined at runtime from SDL display
+static int SCREEN_WIDTH = 320;  // Default fallback
+static int SCREEN_HEIGHT = 240; // Default fallback
 
 typedef struct {
     float x, y, speed;
@@ -50,6 +51,26 @@ void* sdl_thread(void* args) {
     }
     printf("SDL initialized successfully\n");
 
+    // Query the actual display dimensions from SDL
+    const SDL_DisplayMode *display_mode = SDL_GetCurrentDisplayMode(SDL_GetPrimaryDisplay());
+    if (display_mode) {
+        SCREEN_WIDTH = display_mode->w;
+        SCREEN_HEIGHT = display_mode->h;
+        printf("SDL Display mode: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        
+        // For M5Stack Tab5, convert from landscape (1280x720) to portrait (720x1280)
+        // This gives better screen utilization even though orientation is flipped
+        if (SCREEN_WIDTH == 1280 && SCREEN_HEIGHT == 720) {
+            printf("Converting from landscape to portrait orientation for better screen usage\n");
+            int temp = SCREEN_WIDTH;
+            SCREEN_WIDTH = SCREEN_HEIGHT;
+            SCREEN_HEIGHT = temp;
+            printf("Using portrait dimensions: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+        }
+    } else {
+        printf("Failed to get display mode, using defaults: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+
     SDL_Window *window = SDL_CreateWindow("Snow Simulation", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     if (!window) {
         printf("Failed to create window: %s\n", SDL_GetError());
@@ -65,6 +86,7 @@ void* sdl_thread(void* args) {
         return NULL;
     }
 
+    // Initialize snowflakes with the correct screen dimensions
     initialize_snowflakes();
 
     SDL_Event event;
