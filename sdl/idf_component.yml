@@ -69,3 +69,17 @@ license: Zlib
 repository: https://github.com/georgik/esp-idf-component-SDL
 url: https://www.libsdl.org/
 version: 3.3.0~2
+
+examples:
+  - path: ../examples/snow
+    name: snow
+    description: Simple particle simulation with falling white pixels resembling snow
+  - path: ../examples/conway
+    name: conway
+    description: Conway's Game of Life cellular automaton with age-based coloring
+  - path: ../examples/mandelbrot
+    name: mandelbrot
+    description: Mandelbrot fractal visualization with color cycling and zoom animation
+  - path: ../examples/bubble
+    name: bubble
+    description: Simple physics simulation with bouncing bubbles and collision detection
