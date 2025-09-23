@@ -26,17 +26,29 @@ static int max_chunk_height = 4;  // Configurable chunk height
 static ppa_client_handle_t ppa_srm_handle = NULL;  // PPA client handle
 static uint8_t *ppa_out_buf = NULL;  // Reusable PPA output buffer
 static size_t ppa_out_buf_size = 0;  // Size of the PPA output buffer
+static int rotation_angle = 0;  // Rotation angle (0, 90, 180, 270)
+static bool rotation_enabled = false;
+static int scale_factor = 1;
+static bool scaling_enabled = false;
 
-#ifndef SCALE_FACTOR
-int scale_factor = 1;
-float scale_factor_float = 1.0;
-// Workaround to quickly pass scaling to PPA
-// This should be probably handled on Render level
-void set_scale_factor(int factor, float factor_float) {
-    scale_factor = factor;
-    scale_factor_float = factor_float;
+// Function to set rotation angle (called from application)
+void set_display_rotation(int angle) {
+    rotation_angle = angle;
+    rotation_enabled = (angle != 0);
+    ESP_LOGI(TAG, "Display rotation set to %d degrees", angle);
 }
-#endif
+
+void set_display_scale_factor(int factor) {
+    scale_factor = factor;
+    ESP_LOGI(TAG, "Display scale factor set to %dx", factor);
+}
+
+// Function to set scale factor with aspect ratio preservation
+void set_display_scaling(int factor) {
+    scale_factor = factor;
+    scaling_enabled = (factor > 1);
+    ESP_LOGI(TAG, "Display scaling set to %dx", factor);
+}
 
 #else
 static uint16_t *rgb565_buffer = NULL;
@@ -67,6 +79,7 @@ bool SDL_ESPIDF_CreateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *wind
     int w, h;
 
     SDL_GetWindowSizeInPixels(window, &w, &h);
+    // Create framebuffer surface matching the window size - let application handle game resolution scaling
     surface = SDL_CreateSurface(w, h, SDL_PIXELFORMAT_RGB565);
     if (!surface) {
         return false;
@@ -93,7 +106,7 @@ bool SDL_ESPIDF_CreateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *wind
         return SDL_SetError("Failed to create semaphore");
     }
 
-    // Initialize PPA (only for ESP32-P4)
+    // Initialize PPA for rotation (ESP32-P4 only)
 #ifdef CONFIG_IDF_TARGET_ESP32P4
     if (!ppa_srm_handle) {
         ppa_client_config_t ppa_srm_config = {
@@ -103,14 +116,31 @@ bool SDL_ESPIDF_CreateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *wind
         ESP_ERROR_CHECK(ppa_register_client(&ppa_srm_config, &ppa_srm_handle));
     }
 
-    if (scale_factor != 1) {
-        // Allocate reusable PPA output buffer
-        ppa_out_buf_size = (w * scale_factor) * (max_chunk_height * scale_factor) * sizeof(uint16_t);  // 2x scaling
-        ppa_out_buf = heap_caps_malloc(ppa_out_buf_size, MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
+    // Allocate PPA output buffer for rotation (PPA will handle scaling)
+    if (rotation_enabled && !ppa_out_buf) {
+        // Use original game resolution for input, PPA will scale during processing
+        // After 90/270° rotation: 320x200 becomes 200x320, then scaled by scale_factor
+        int game_width = 320;
+        int game_height = 200;
+        int rotated_width = (rotation_angle == 90 || rotation_angle == 270) ? game_height : game_width;
+        int rotated_height = (rotation_angle == 90 || rotation_angle == 270) ? game_width : game_height;
+        // Output dimensions after rotation AND scaling
+        int output_width = rotated_width * scale_factor;
+        int output_height = rotated_height * scale_factor;
+        
+        // PPA requires proper buffer alignment - align to 64 bytes for safety
+        size_t raw_size = output_width * output_height * sizeof(uint16_t);
+        ppa_out_buf_size = (raw_size + 63) & ~63;  // Align to 64 bytes
+        
+        // Allocate DMA-capable buffer with proper alignment
+        ppa_out_buf = heap_caps_aligned_alloc(64, ppa_out_buf_size, MALLOC_CAP_DMA | MALLOC_CAP_SPIRAM);
         if (!ppa_out_buf) {
-            return SDL_SetError("Failed to allocate PPA output buffer");
+            return SDL_SetError("Failed to allocate aligned PPA output buffer for rotation");
         }
+        ESP_LOGI(TAG, "PPA rotation buffer allocated: %dx%d (%zu bytes raw, %zu aligned, scaled game resolution %dx)", 
+                 output_width, output_height, raw_size, ppa_out_buf_size, scale_factor);
     }
+
     const esp_lcd_dpi_panel_event_callbacks_t callback = {
         .on_color_trans_done = lcd_event_callback,
     };
@@ -130,48 +160,94 @@ IRAM_ATTR bool SDL_ESPIDF_UpdateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Wi
     }
 
 #ifdef CONFIG_IDF_TARGET_ESP32P4
-    // Iterate over the framebuffer in chunks
-    for (int y = 0; y < surface->h; y += max_chunk_height) {
-        int height = (y + max_chunk_height > surface->h) ? (surface->h - y) : max_chunk_height;
-        uint16_t *src_pixels = (uint16_t *)surface->pixels + (y * surface->w);
-
-        if (scale_factor != 1) {
-            // PPA SRM configuration for scaling
-            ppa_srm_oper_config_t srm_config = {
-                .in.buffer = src_pixels,
-                .in.pic_w = surface->w,
-                .in.pic_h = height,
-                .in.block_w = surface->w,
-                .in.block_h = height,
-                .in.srm_cm = PPA_SRM_COLOR_MODE_RGB565,
-
-                .out.srm_cm = PPA_SRM_COLOR_MODE_RGB565,
-                .out.buffer = ppa_out_buf,
-                .out.buffer_size = ppa_out_buf_size,  // Reused output buffer
-                .out.pic_w = surface->w * scale_factor,
-                .out.pic_h = height * scale_factor,
-
-                .rotation_angle = PPA_SRM_ROTATION_ANGLE_0,  // No rotation
-                .scale_x = scale_factor_float,
-                .scale_y = scale_factor_float,
-
-                .rgb_swap = 0,
-                .byte_swap = 0,
-                .mode = PPA_TRANS_MODE_BLOCKING,
-            };
-
-            // Execute PPA scaling
-            ESP_ERROR_CHECK(ppa_do_scale_rotate_mirror(ppa_srm_handle, &srm_config));
-
-            // Draw the scaled output to the LCD
-            ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel_handle, 0, y * scale_factor, surface->w * scale_factor, (y + height) * scale_factor, ppa_out_buf));
-        } else {
-            // Draw the scaled output to the LCD
-            ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel_handle, 0, y, surface->w, (y + height), src_pixels));
+    // ESP32-P4 with optional PPA rotation and scaling
+    if (rotation_enabled && ppa_out_buf) {
+        // Game content dimensions (original, PPA will scale)
+        int game_width = 320;
+        int game_height = 200;
+        
+        // Use PPA to rotate only the game content (320x200) from the larger framebuffer
+        ppa_srm_rotation_angle_t ppa_rotation;
+        switch (rotation_angle) {
+            case 90:  ppa_rotation = PPA_SRM_ROTATION_ANGLE_90; break;
+            case 180: ppa_rotation = PPA_SRM_ROTATION_ANGLE_180; break;
+            case 270: ppa_rotation = PPA_SRM_ROTATION_ANGLE_270; break;
+            default:  ppa_rotation = PPA_SRM_ROTATION_ANGLE_0; break;
         }
 
-        // Wait for the current chunk to finish transmission
+        // Calculate output dimensions after rotation and scaling
+        int rotated_width = (rotation_angle == 90 || rotation_angle == 270) ? game_height : game_width;
+        int rotated_height = (rotation_angle == 90 || rotation_angle == 270) ? game_width : game_height;
+        int out_width = rotated_width * scale_factor;
+        int out_height = rotated_height * scale_factor;
+        
+        // Center the rotated game content on display
+        // For M5Stack Tab5: 720x1280 display, rotated 320x200 becomes 200x320
+        int display_width = 720;
+        int display_height = 1280;
+        
+        int offset_x = (display_width - out_width) / 2;
+        int offset_y = (display_height - out_height) / 2;
+        
+        // Ensure we don't go negative
+        offset_x = (offset_x < 0) ? 0 : offset_x;
+        offset_y = (offset_y < 0) ? 0 : offset_y;
+
+        ppa_srm_oper_config_t srm_config = {
+            .in.buffer = surface->pixels,  // Start of framebuffer
+            .in.pic_w = surface->w,        // Full framebuffer width for pitch calculation
+            .in.pic_h = surface->h,        // Full framebuffer height
+            .in.block_w = game_width,      // Only process game content width (320)
+            .in.block_h = game_height,     // Only process game content height (200)
+            .in.block_offset_x = 0,        // Game content starts at top-left
+            .in.block_offset_y = 0,
+            .in.srm_cm = PPA_SRM_COLOR_MODE_RGB565,
+
+            .out.buffer = ppa_out_buf,
+            .out.buffer_size = ppa_out_buf_size,
+            .out.pic_w = out_width,        // Rotated dimensions
+            .out.pic_h = out_height,
+            .out.block_offset_x = 0,
+            .out.block_offset_y = 0,
+            .out.srm_cm = PPA_SRM_COLOR_MODE_RGB565,
+
+            .rotation_angle = ppa_rotation,
+            .scale_x = scale_factor,  // Hardware scaling during rotation
+            .scale_y = scale_factor,
+            .mirror_x = 0,
+            .mirror_y = 0,
+            .rgb_swap = 0,
+            .byte_swap = 0,
+            .mode = PPA_TRANS_MODE_BLOCKING,
+        };
+
+        // Execute PPA rotation for game content only
+        esp_err_t result = ppa_do_scale_rotate_mirror(ppa_srm_handle, &srm_config);
+        if (result != ESP_OK) {
+            ESP_LOGE(TAG, "PPA rotation failed: %s", esp_err_to_name(result));
+            // Fall back to non-rotated chunked rendering
+            goto fallback_rendering;
+        }
+
+        // Draw the rotated game content centered on display (display is cleared by having black around content)
+        ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel_handle, offset_x, offset_y, 
+                                                 offset_x + out_width, offset_y + out_height, ppa_out_buf));
+        
+        // Wait for transmission to complete
         xSemaphoreTake(lcd_semaphore, portMAX_DELAY);
+    } else {
+    fallback_rendering:
+        // Fallback: chunked output without rotation
+        for (int y = 0; y < surface->h; y += max_chunk_height) {
+            int height = (y + max_chunk_height > surface->h) ? (surface->h - y) : max_chunk_height;
+            uint16_t *src_pixels = (uint16_t *)surface->pixels + (y * surface->w);
+            
+            // Direct output without rotation
+            ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel_handle, 0, y, surface->w, y + height, src_pixels));
+            
+            // Wait for the current chunk to finish transmission
+            xSemaphoreTake(lcd_semaphore, portMAX_DELAY);
+        }
     }
 #else
     // Without PPA, send chunks directly from src_pixels
