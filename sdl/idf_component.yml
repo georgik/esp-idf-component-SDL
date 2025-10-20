@@ -73,15 +73,15 @@ files:
   - SDL/src/core/linux/SDL_dbus.h
 
 examples:
-  - path: ../examples/snow
+  - path: ./examples/snow
     name: snow
     description: Simple particle simulation with falling white pixels resembling snow
-  - path: ../examples/conway
+  - path: ./examples/conway
     name: conway
     description: Conway's Game of Life cellular automaton with age-based coloring
-  - path: ../examples/mandelbrot
+  - path: ./examples/mandelbrot
     name: mandelbrot
     description: Mandelbrot fractal visualization with color cycling and zoom animation
-  - path: ../examples/bubble
+  - path: ./examples/bubble
     name: bubble
     description: Simple physics simulation with bouncing bubbles and collision detection
