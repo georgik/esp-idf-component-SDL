@@ -91,7 +91,11 @@ typedef unsigned int uintptr_t;
 #define SDL_AUDIO_DRIVER_DUMMY  1
 
 /* Enable the stub joystick driver (src/joystick/dummy/\*.c) */
-//#define SDL_JOYSTICK_DISABLED   1
+// ESP-IDF doesn't support Linux joysticks via udev
+#define SDL_JOYSTICK_DISABLED   1
+
+/* Note: Don't define HAVE_LIBUDEV or HAVE_DBUS_DBUS_H at all
+ * (not even as 0) because SDL uses #ifdef to check if they exist */
 
 /* Enable the stub haptic driver (src/haptic/dummy/\*.c) */
 #define SDL_HAPTIC_DISABLED 1
