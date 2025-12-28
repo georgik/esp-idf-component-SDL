@@ -20,7 +20,8 @@ idf_component_register(SRCS
                         "SDL/src/filesystem/SDL_filesystem.c"
                         "SDL/src/stdlib/SDL_iconv.c"
                         "SDL/src/stdlib/SDL_getenv.c"
-                        "SDL/src/stdlib/SDL_malloc.c"
+                        # Wrapper to add #include <stdlib.h> for malloc/calloc/realloc declarations
+                        "src/stdlib/SDL_malloc.c"
                         "SDL/src/stdlib/SDL_memset.c"
 
                         # IO
@@ -65,7 +66,8 @@ idf_component_register(SRCS
                         #"src/thread/esp-idf/SDL_systls.c"
 
                         "SDL/src/cpuinfo/SDL_cpuinfo.c"
-                        "SDL/src/SDL_assert.c"
+                        # Wrapper to add #include <stdlib.h> for abort() declaration
+                        "src/SDL_assert.c"
                         "SDL/src/SDL_error.c"
                         "SDL/src/SDL_hashtable.c"
                         "SDL/src/SDL_hints.c"

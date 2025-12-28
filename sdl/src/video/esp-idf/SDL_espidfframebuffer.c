@@ -10,11 +10,13 @@
 #include "esp_lcd_panel_ops.h"
 #include "SDL_espidfshared.h"
 #include "esp_heap_caps.h"
-#include "freertos/semphr.h"
 #ifdef CONFIG_IDF_TARGET_ESP32P4
 #include "driver/ppa.h"
+#include "esp_lcd_types.h"
 #include "esp_lcd_mipi_dsi.h"
 #endif
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 
 static const char *TAG = "SDL_espidfframebuffer";
 
