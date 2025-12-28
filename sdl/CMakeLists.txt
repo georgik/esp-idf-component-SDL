@@ -77,7 +77,6 @@ idf_component_register(SRCS
                         "SDL/src/render/software/SDL_blendpoint.c"
                         "SDL/src/render/software/SDL_drawline.c"
                         "SDL/src/render/software/SDL_drawpoint.c"
-                        "SDL/src/render/software/SDL_rotate.c"
                         "SDL/src/render/software/SDL_render_sw.c"
                         "SDL/src/render/software/SDL_triangle.c"
                         "SDL/src/render/SDL_yuv_sw.c"
@@ -95,6 +94,7 @@ idf_component_register(SRCS
                         "SDL/src/video/SDL_fillrect.c"
                         "SDL/src/video/SDL_pixels.c"
                         "SDL/src/video/SDL_rect.c"
+                        "SDL/src/video/SDL_rotate.c"
                         "SDL/src/video/SDL_stb.c"
                         "SDL/src/video/SDL_stretch.c"
                         "SDL/src/video/SDL_surface.c"
@@ -163,3 +163,8 @@ idf_component_register(SRCS
 # Corrections for some function usning wrapper technique
 # https://github.com/espressif/esp-idf/tree/master/examples/build_system/wrappers
 target_link_options(${COMPONENT_LIB} PRIVATE "-Wl,--wrap=SDL_SYS_SetThreadPriority")
+
+# Suppress type-limits warnings from upstream SDL code
+# SDL_arraysize returns size_t (unsigned), which triggers warnings when compared
+# with loop variables. This is safe to ignore as the comparisons are correct.
+target_compile_options(${COMPONENT_LIB} PRIVATE "-Wno-type-limits")

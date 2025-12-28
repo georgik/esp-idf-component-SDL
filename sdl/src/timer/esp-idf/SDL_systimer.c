@@ -144,7 +144,6 @@ void SDL_SYS_DelayNS(Uint64 ns)
 #ifdef HAVE_NANOSLEEP
     struct timespec tv, remaining;
 #else
-    struct timeval tv;
     Uint64 then, now, elapsed;
 #endif
 
