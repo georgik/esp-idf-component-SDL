@@ -53,7 +53,7 @@ static SDL_VideoDevice *ESPIDF_CreateDevice(void)
 
 VideoBootStrap PRIVATE_bootstrap = {
     ESPIDFVID_DRIVER_NAME, "SDL esp-idf video driver",
-    ESPIDF_CreateDevice, NULL
+    ESPIDF_CreateDevice, NULL, false
 };
 
 static bool ESPIDF_VideoInit(SDL_VideoDevice *_this)
