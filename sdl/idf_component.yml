@@ -1,7 +1,7 @@
 license: Zlib
 repository: https://github.com/georgik/esp-idf-component-SDL
 url: https://www.libsdl.org/
-version: 3.3.7~2
+version: 3.3.7~3
 
 description: Simple DirectMedia Layer (SDL) Version 3.3 (ESP-IDF wrapper on upstream SDL)
 
@@ -34,7 +34,6 @@ files:
   - "SDL/src/**/haiku/**/*"
   - "SDL/src/**/khronos/**/*"
   - "SDL/src/**/kmsdrm/**/*"
-  - "SDL/src/**/linux/**/*"
   - "SDL/src/**/macos/**/*"
   - "SDL/src/**/n3ds/**/*"
   - "SDL/src/**/ngage/**/*"

@@ -30,7 +30,14 @@
  *  This is a set of defines to configure the SDL features
  */
 
+// Override platform detection - we're building for ESP-IDF, not the host platform
+#undef SDL_PLATFORM_LINUX
+#undef SDL_PLATFORM_UNIX
+#undef SDL_PLATFORM_APPLE
+#undef SDL_PLATFORM_MACOS
+#undef SDL_PLATFORM_IOS
 #define SDL_PLATFORM_ESP_IDF 1
+
 /* Add any platform that doesn't build using the configure system. */
 #if defined(SDL_PLATFORM_ESP_IDF)
 #include "SDL_build_config_esp_idf.h"
