@@ -1,0 +1,21 @@
+name: sdl_bsp
+version: 3.3.0~2
+description: ESP-BSP-SDL Abstraction Layer Component. Works with unified BSP selector.
+dependencies:
+  idf:
+    version: '>=5.5.0'
+
+  # Touch support - required by some board BSPs
+  espressif/esp_lcd_touch:
+    version: "*"
+    require: "private"
+
+license: MIT License and the Apache License 2.0
+repository: https://github.com/georgik/esp-idf-component-SDL
+url: https://github.com/georgik/esp-idf-component-SDL
+
+exclude:
+  - build/**
+  - support/**
+  - .clang-format
+  - sdkconfig
