@@ -4,9 +4,14 @@ dependencies:
     version: "*"
     override_path: "../../.."
 
-  # ESP-BSP selector for unified board selection
+  # ESP-BSP selector from local components
   espressif/bsp_selector:
     version: "*"
+    override_path: "../components/bsp_selector"
+
+  espressif/esp_lcd_touch:
+    version: "*"
+    require: "private"
 
   idf:
     version: ">=5.5.0"

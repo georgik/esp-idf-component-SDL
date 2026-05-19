@@ -1,30 +1,16 @@
-# ESP-BSP SDL Configuration for snow example
-
-# Select SDL as graphics library (via bsp_selector)
-CONFIG_BSP_SELECT_GLIB_SEL=1
-CONFIG_BSP_SELECT_GLIB_SEL_SDL=y
-
-# Select default board (user can change via menuconfig)
-# Uncomment the board you want to use:
-
-# M5 Atom S3 (128x128)
-# CONFIG_BSP_SELECT_M5_ATOM_S3=y
-
-# ESP-Box-3 (320x240)
-# CONFIG_BSP_SELECT_ESP_BOX_3=y
-
-# M5Stack Core S3 (320x240)
-# CONFIG_BSP_SELECT_M5STACK_CORE_S3=y
-
-# ESP32-P4 Function EV Board (1280x800)
-# CONFIG_BSP_SELECT_ESP32_P4_FUNCTION_EV_BOARD=y
-
-# ESP32-S3-LCD-EV-Board (800x480)
-# CONFIG_BSP_SELECT_ESP32_S3_LCD_EV_BOARD=y
-
-# M5Stack Tab5 (1280x720 landscape) - Default
+# This file was generated using idf.py save-defconfig or menuconfig [D] key. It can be edited manually.
+# Espressif IoT Development Framework (ESP-IDF) 6.1.0 Project Minimal Configuration
+#
+# default:
+CONFIG_IDF_TARGET="esp32p4"
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_100=y
+CONFIG_SPIRAM=y
+CONFIG_ESP_SYSTEM_PANIC_PRINT_HALT=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=32000
+CONFIG_FREERTOS_HZ=1000
 CONFIG_BSP_SELECT_M5STACK_TAB5=y
-
-# SDL BSP specific options
-CONFIG_SDL_BSP_ENABLED=y
-CONFIG_SDL_BSP_TOUCH_ENABLE=y
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y

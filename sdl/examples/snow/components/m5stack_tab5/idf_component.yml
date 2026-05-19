@@ -1,0 +1,53 @@
+version: "2.0.0"
+description: Board Support Package (BSP) for M5Stack Tab5
+url: https://github.com/espressif/esp-bsp/tree/master/bsp/m5stack_tab5
+
+targets:
+  - esp32p4
+
+tags:
+  - bsp
+  - M5Stack
+
+dependencies:
+  idf: ">=5.4"
+
+  esp_codec_dev:
+    version: "~1.5"
+    public: true
+
+  espressif/esp_io_expander:
+    version: "*"
+    public: true
+
+  espressif/esp_io_expander_pi4ioe5v6408:
+    version: "*"
+    public: true
+
+  espressif/esp_lcd_st7123:
+    version: "*"
+    public: false
+
+  espressif/esp_lcd_ili9881c:
+    version: "*"
+    public: false
+
+  espressif/esp_lcd_touch_st7123:
+    version: "*"
+    public: true
+
+  espressif/esp_lcd_touch_gt911:
+    version: "*"
+    public: true
+
+  esp_video:
+    version: "~2.0"
+    public: true
+
+  usb:
+    version: "^1"
+    public: true
+
+  espressif/bmi270:
+    version: "*"
+    public: true

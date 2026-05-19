@@ -13,7 +13,7 @@ elseif(CONFIG_BSP_SELECT_ESP32_P4_FUNCTION_EV_BOARD)
 elseif(CONFIG_BSP_SELECT_ESP32_S3_LCD_EV_BOARD)
     list(APPEND MAIN_PRIV_REQUIRES "espressif__esp32_s3_lcd_ev_board_noglib")
 elseif(CONFIG_BSP_SELECT_M5STACK_TAB5)
-    list(APPEND MAIN_PRIV_REQUIRES "espressif__m5stack_tab5_noglib")
+    list(APPEND MAIN_PRIV_REQUIRES "m5stack_tab5")
 endif()
 
 idf_component_register(

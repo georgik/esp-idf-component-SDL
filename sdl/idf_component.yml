@@ -9,10 +9,6 @@ dependencies:
   idf:
     version: '>=6.0'
 
-  # ESP-BSP SDL abstraction layer (same repo)
-  georgik/esp_sdl_bsp:
-    version: "^3.3.0~2"
-
 files:
   exclude:
   - ".github/**/*"
