@@ -1,0 +1,9 @@
+version: "1.0.1"
+description: Selector of BSP (local copy for esp-idf-component-SDL)
+url: https://github.com/espressif/esp-bsp/tree/master/components/bsp_selector
+
+tags:
+   - bsp
+
+dependencies:
+  idf : ">=5.3"

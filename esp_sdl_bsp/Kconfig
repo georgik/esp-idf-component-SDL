@@ -1,0 +1,18 @@
+# ESP-BSP SDL Configuration
+# Board selection is handled by bsp_selector (BSP_SELECT_* variables)
+
+menu "ESP-BSP SDL"
+
+    config SDL_BSP_ENABLED
+        bool "Enable SDL BSP Support"
+        default y
+        help
+          Enable SDL BSP board support. Board is selected via bsp_selector.
+
+    config SDL_BSP_TOUCH_ENABLE
+        bool "Enable Touch Support"
+        default y
+        help
+          Enable touch input support for SDL BSP. Requires touch panel on the board.
+
+endmenu
